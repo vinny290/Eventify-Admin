@@ -12,7 +12,7 @@ const Navbar = observer(() => {
   const authStore = useAuth()
   const {
     handleLogout,
-    errorLoginMessage,
+    errorLogoutMessage,
     isLoading
   } = useLogout()
 
@@ -21,11 +21,11 @@ const Navbar = observer(() => {
       await handleLogout()
       toast.success('Успешный выход!')
     } catch {
-      toast.error(errorLoginMessage || 'Ошибка при выходе')
+      toast.error(errorLogoutMessage || 'Ошибка при выходе')
     }
   }
   return (
-    <nav className="fixed w-full bg-white/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border-b border-gray-200 dark:border-white/5 z-50">
+    <nav className="w-full bg-white/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border-b border-gray-200 dark:border-white/5 z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <Link href="/">
           <div className="flex items-center gap-2">

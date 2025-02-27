@@ -7,7 +7,7 @@ import { useState } from 'react'
 
 export function useLogout() {
     const [isLoading, setIsLoading] = useState(false)
-    const [errorLoginMessage, setErrorLoginMessage] = useState<string | null>(null)
+    const [errorLogoutMessage, setErrorLogoutMessage] = useState<string | null>(null)
     const router = useRouter()
     const authStore = useAuth()
 
@@ -18,7 +18,7 @@ export function useLogout() {
             router.push('/')
         } catch (error: any) {
             console.error('Logout error:', error)
-            setErrorLoginMessage(
+            setErrorLogoutMessage(
                 error.response?.data?.message ||
                 "Проблема выхода из аккаунта"
             )
@@ -30,7 +30,7 @@ export function useLogout() {
 
     return {
         handleLogout,
-        errorLoginMessage,
+        errorLogoutMessage,
         isLoading
     }
 }
