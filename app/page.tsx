@@ -1,13 +1,23 @@
-"use client"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { format } from "date-fns"
-import { ru } from "date-fns/locale"
-import { useGetEvents } from '@/hook/events/useGetListEvents'
+// pages/EventsPage.tsx
+"use client";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
+import { ru } from "date-fns/locale";
+import { useGetEvents } from "@/hook/events/useGetListEvents";
+import EventImage from "@/components/custom/EventImage";
+import React from "react";
 
-export default function EventsPage() {
-  const { events, isLoading, errorGetListEvents, refetch } = useGetEvents()
+export default function EventsPage(): Element {
+  const { events, isLoading, errorGetListEvents, refetch } = useGetEvents();
 
   if (isLoading) {
     return (
@@ -15,6 +25,7 @@ export default function EventsPage() {
         {Array.from({ length: 6 }).map((_, index) => (
           <Card key={index}>
             <CardHeader>
+              <Skeleton className="h-[200px] w-full rounded-md mb-4" />
               <Skeleton className="h-6 w-3/4" />
             </CardHeader>
             <CardContent>
@@ -28,16 +39,16 @@ export default function EventsPage() {
           </Card>
         ))}
       </div>
-    )
+    );
   }
 
   if (errorGetListEvents) {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-4">
         <p className="text-red-500 text-lg">{errorGetListEvents}</p>
-        <Button onClick={refetch}>Попробовать снова</Button>
+        <Button onClick={() => refetch()}>Попробовать снова</Button>
       </div>
-    )
+    );
   }
 
   if (!events || events.length === 0) {
@@ -45,33 +56,43 @@ export default function EventsPage() {
       <div className="flex flex-col items-center justify-center h-screen">
         <p className="text-gray-500 text-lg">Мероприятий не найдено</p>
       </div>
-    )
+    );
   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-      {events.map((event) => (
-        <Card key={event.id}>
+      {events.map((event: Event) => (
+        <Card key={event.id} className="overflow-hidden">
+          <div className="p-0">
+            <EventImage imageId={event.cover} alt={event.title} />
+          </div>
           <CardHeader>
             <CardTitle>{event.title}</CardTitle>
             <CardDescription>
-              {format(new Date(event.start * 1000), "d MMMM yyyy, HH:mm", { locale: ru })}
+              {format(new Date(event.start * 1000), "d MMMM yyyy, HH:mm", {
+                locale: ru,
+              })}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600 line-clamp-3">{event.description}</p>
+            <p className="text-sm text-gray-600 line-clamp-3">
+              {event.description}
+            </p>
             <div className="mt-4">
               <p className="text-sm font-medium">Место:</p>
               <p className="text-sm text-gray-600">{event.location}</p>
             </div>
           </CardContent>
           <CardFooter>
-            <Button variant={event.subscribed ? "secondary" : "default"} className="w-full">
+            <Button
+              variant={event.subscribed ? "secondary" : "default"}
+              className="w-full"
+            >
               {event.subscribed ? "Вы записаны" : "Записаться"}
             </Button>
           </CardFooter>
         </Card>
       ))}
     </div>
-  )
+  );
 }
