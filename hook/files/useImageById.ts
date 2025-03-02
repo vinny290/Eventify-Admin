@@ -22,6 +22,7 @@ export function useImageById(
   useEffect(() => {
     // Если ID не предоставлен, не выполняем запрос
     if (!id) {
+      console.log("Хук: ID не предоставлен, запрос не выполняется");
       return;
     }
 
@@ -33,20 +34,34 @@ export function useImageById(
       setError(null);
 
       try {
-        // Используем ваш API-роут для получения изображения
-        const response = await fetch(`/file/${id}`, {
+        // Исправляем путь для соответствия API-роуту
+        const requestUrl = `api/file/${id}`;
+        console.log(`Хук: Запрос изображения по URL: ${requestUrl}`);
+
+        const response = await fetch(requestUrl, {
           signal: controller.signal,
+          cache: "no-store",
         });
 
+        console.log(`Хук: Получен ответ со статусом: ${response.status}`);
+
         if (!response.ok) {
-          throw new Error(`Ошибка загрузки изображения: ${response.status}`);
+          const errorText = await response.text();
+          console.error(`Хук: Ошибка ответа: ${errorText}`);
+          throw new Error(
+            `Ошибка загрузки изображения: ${response.status} - ${errorText}`,
+          );
         }
 
         // Получаем данные как Blob
         const blob = await response.blob();
+        console.log(
+          `Хук: Получен blob размером: ${blob.size} байт, тип: ${blob.type}`,
+        );
 
         // Создаем временный URL для Blob
         const url = URL.createObjectURL(blob);
+        console.log(`Хук: Создан URL объекта: ${url}`);
 
         if (isMounted) {
           setImageUrl(url);
@@ -54,10 +69,11 @@ export function useImageById(
         }
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") {
+          console.log("Хук: Запрос был отменен");
           return;
         }
 
-        console.error("Ошибка при загрузке изображения:", err);
+        console.error("Хук: Ошибка при загрузке изображения:", err);
 
         if (isMounted) {
           setError(err instanceof Error ? err.message : "Неизвестная ошибка");
@@ -70,6 +86,7 @@ export function useImageById(
 
     // Очистка при размонтировании компонента
     return () => {
+      console.log(`Хук: Очистка ресурсов для ID: ${id}`);
       isMounted = false;
       controller.abort();
 
