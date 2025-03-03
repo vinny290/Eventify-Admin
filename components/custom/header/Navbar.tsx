@@ -35,6 +35,9 @@ const Navbar = observer(() => {
             </div>
           </div>
         </Link>
+        <Link href="/event/create">
+          <p>Создание</p>
+        </Link>
         <div className="flex items-center gap-6">
           <a
             href="#contact"
