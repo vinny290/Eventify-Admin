@@ -14,7 +14,7 @@ export const POST = async (req: Request) => {
     const eventData = await req.json();
 
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/events`,
+      `${process.env.NEXT_PUBLIC_API_URL}/events`,
       eventData,
       {
         headers: {

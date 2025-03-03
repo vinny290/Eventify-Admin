@@ -22,7 +22,7 @@ export const useCreateEvent = () => {
     setErrorCreateEvent(null);
 
     try {
-      const response = await axios.post('/event/create', eventData, {
+      const response = await axios.post('/api/events/create', eventData, {
         headers: { 'Content-Type': 'application/json' }
       });
       if (response.data.id) { // Проверяем наличие ID в ответе

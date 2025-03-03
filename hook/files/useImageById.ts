@@ -35,7 +35,7 @@ export function useImageById(
 
       try {
         // Исправляем путь для соответствия API-роуту
-        const requestUrl = `api/file/${id}`;
+        const requestUrl = `/api/file/${id}`;
         console.log(`Хук: Запрос изображения по URL: ${requestUrl}`);
 
         const response = await fetch(requestUrl, {

@@ -23,7 +23,7 @@ const EventCreatePage = () => {
         end: '',
         location: '',
         categories: [] as string[],
-        organizationID: "9e1df887-5e80-4dc0-ab91-148f5f2bdae5"
+        organizationID: "708dee71-9744-4167-b82b-d337381b79c8"
     })
 
     const { categories, loadingGetListCategories, errorGetListCategories } = useGetCategories()
