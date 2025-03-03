@@ -7,16 +7,16 @@ export async function GET() {
   if (!accessToken) {
     return NextResponse.json(
       { error: "Unauthorized: Токен не предоставлен" },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/events`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
 
@@ -24,7 +24,7 @@ export async function GET() {
       const errorMessage = await response.text();
       return NextResponse.json(
         { error: `Ошибка при получении данных: ${errorMessage}` },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
