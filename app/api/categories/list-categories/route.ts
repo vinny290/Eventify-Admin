@@ -12,7 +12,7 @@ export async function GET() {
       }
     
     try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/category`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/category`,{
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

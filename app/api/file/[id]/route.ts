@@ -12,8 +12,7 @@ export async function GET(
   request: NextRequest,
   { params }: Params,
 ): Promise<NextResponse> {
-  const { id } = params;
-  console.log(`API-роут: Получен запрос на файл с ID: ${id}`);
+  const { id } = await params;
 
   const accessToken = (await cookies()).get("accessToken")?.value;
 
@@ -25,8 +24,6 @@ export async function GET(
   try {
     // Формируем URL для запроса к бэкенду
     const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/files/${id}`;
-    console.log(`API-роут: Запрос к бэкенду: ${apiUrl}`);
-
     // Запрос к API для получения конкретного файла по ID
     const response = await fetch(apiUrl, {
       method: "GET",
@@ -36,11 +33,8 @@ export async function GET(
       cache: "no-store",
     });
 
-    console.log(`API-роут: Статус ответа от бэкенда: ${response.status}`);
-
     if (!response.ok) {
       const errorMessage = await response.text();
-      console.error(`API-роут: Ошибка от бэкенда: ${errorMessage}`);
       return NextResponse.json(
         { error: `Ошибка при получении файла: ${errorMessage}` },
         { status: response.status },
@@ -49,13 +43,9 @@ export async function GET(
 
     // Получаем файл как бинарные данные
     const imageData = await response.arrayBuffer();
-    console.log(
-      `API-роут: Получены данные размером: ${imageData.byteLength} байт`,
-    );
 
     // Определяем тип контента из заголовков ответа
     const contentType = response.headers.get("content-type") || "image/jpeg";
-    console.log(`API-роут: Тип контента: ${contentType}`);
 
     // Возвращаем изображение с правильным типом контента
     return new NextResponse(imageData, {
