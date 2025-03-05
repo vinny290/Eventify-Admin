@@ -1,5 +1,3 @@
-// src/hook/events/useCreateEvent.ts
-
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -25,9 +23,10 @@ export const useCreateEvent = () => {
       const response = await axios.post('/api/events/create', eventData, {
         headers: { 'Content-Type': 'application/json' }
       });
-      if (response.data.id) { // Проверяем наличие ID в ответе
+      if (response.data.id) {
         return response.data;
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       let message = 'Ошибка при создании ивента';
       if (axios.isAxiosError(err)) {

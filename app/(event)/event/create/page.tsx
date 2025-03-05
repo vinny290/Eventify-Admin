@@ -11,6 +11,7 @@ import { useUploadProfileImage } from '@/hook/files/useUpload'
 import { useCreateEvent } from '@/hook/events/useCreateEvent'
 import ImageByIdComponent from '@/components/custom/events/ImageByIdComponent'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 const EventCreatePage = () => {
     const router = useRouter()
@@ -72,7 +73,6 @@ const EventCreatePage = () => {
                 filesArray.map(file => uploadImage({ file }))
             )
 
-            // results содержит id загруженных изображений
             const newIds = results.flat()
 
             setEventData(prev => ({
@@ -95,8 +95,10 @@ const EventCreatePage = () => {
                 end: new Date(eventData.end).getTime() / 1000
             })
             console.log('Созданный ивент:', createdEvent)
+            toast.success('Мероприятие создано!')
             router.push('/')
         } catch (err) {
+            toast.error(errorCreateEvent || 'Ошибка в создании')
             console.error(err)
         }
     }

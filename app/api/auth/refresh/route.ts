@@ -1,30 +1,37 @@
+import { NextResponse } from 'next/server'
+import axios from 'axios'
+
 export async function POST(req: Request) {
-  const { token } = await req.json();
-
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({ token }),
-    });
+    const { refresh } = await req.json()
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Ошибка при обновлении на внешнем сервере:", errorText);
-      return new Response(JSON.stringify({ message: errorText }), {
-        status: response.status,
-      });
+    const { data, status } = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth`,
+      { refresh },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }
+      }
+    )
+
+    return NextResponse.json({
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken
+    }, { status })
+    
+  } catch (error) {
+    console.error('Internal server error:')
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status || 500
+      const message = error.response?.data?.message || 'Internal server error'
+      console.error(`Status: ${status}, Message: ${message}`)
+      return NextResponse.json({ message }, { status })
     }
-
-    const data = await response.json();
-    return new Response(JSON.stringify(data), { status: 200 });
-  } catch (e: unknown) {
-    console.error("Ошибка сервера в /api/auth/refresh:", e);
-    return new Response(JSON.stringify({ message: "Server error" }), {
-      status: 500,
-    });
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }

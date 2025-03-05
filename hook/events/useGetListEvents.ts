@@ -22,7 +22,7 @@ export function useGetEvents(): GetEventsResult {
     try {
       const accessToken = Cookies.get("accessToken");
       if (!accessToken) {
-        setErrorGetListEvents("Unauthorized: Please login.");
+        setErrorGetListEvents("Вы не авторизованы: выполните вход.");
         return;
       }
 

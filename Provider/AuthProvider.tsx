@@ -1,24 +1,25 @@
 "use client"
-import React, { createContext, useContext, useEffect } from 'react'
-import { useLocalObservable, observer } from 'mobx-react-lite'
+import React, { createContext, useContext, useEffect, useState } from 'react'
+import { useLocalObservable } from 'mobx-react-lite'
 import { AuthStore } from '../stores/AuthStore'
 
 const AuthContext = createContext<AuthStore | null>(null)
 
-export const AuthProvider = observer(({ children }: { children: React.ReactNode }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [isHydrated, setIsHydrated] = useState(false)
   const authStore = useLocalObservable(() => new AuthStore())
 
   useEffect(() => {
-    return () => {
-      if (authStore.refreshTimer) {
-        clearTimeout(authStore.refreshTimer)
-        authStore.refreshTimer = null
-      }
-    }
+    authStore.syncFromBrowser()
+    setIsHydrated(true)
   }, [authStore])
 
-  return <AuthContext.Provider value={authStore}>{children}</AuthContext.Provider>
-})
+  return (
+    <AuthContext.Provider value={authStore}>
+      {isHydrated ? children : null}
+    </AuthContext.Provider>
+  )
+}
 
 export const useAuth = () => {
   const store = useContext(AuthContext)

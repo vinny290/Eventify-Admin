@@ -11,11 +11,12 @@ export class AuthStore {
 
   constructor() {
     makeAutoObservable(this)
+  }
 
-    if (typeof window !== 'undefined') {
-      this.accessToken = Cookies.get('accessToken') || null
-      this.refreshToken = Cookies.get('refreshToken') || null
-    }
+  syncFromBrowser() {
+    this.accessToken = Cookies.get('accessToken') || null
+    this.refreshToken = Cookies.get('refreshToken') || null
+    this.userID = Cookies.get('userID') || null
   }
 
   setAccessToken(a_token: string) {
@@ -40,19 +41,31 @@ export class AuthStore {
       sameSite: 'Lax'
     })
   }
+  setUserID(userID: string) {
+    if (!userID) throw new Error('Invalid refresh token')
+
+    this.userID = userID
+
+    Cookies.set('userID', userID, {
+      secure: false,
+      sameSite: 'Lax'
+    })
+  }
 
   login(a_token: string, r_token: string, userID: string) {
     this.setAccessToken(a_token)
     this.setRefreshToken(r_token)
-    this.userID = userID;
+    this.setUserID(userID);
   }
 
   logout() {
     this.accessToken = null
     this.refreshToken = null
     this.userID = null;
+    this.isRefreshing = false
 
     Cookies.remove('accessToken')
     Cookies.remove('refreshToken')
+    Cookies.remove('userID')
   }
 }
