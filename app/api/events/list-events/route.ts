@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-export async function GET() {
+export async function GET(request) {
   // Получаем accessToken из cookies, который устанавливается AuthStore
   const accessToken = (await cookies()).get("accessToken")?.value;
   if (!accessToken) {
@@ -12,7 +12,18 @@ export async function GET() {
   }
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
+    // Получаем URL текущего запроса
+    const { searchParams } = new URL(request.url);
+
+    // Формируем URL API с query-параметрами
+    const apiUrl = new URL(`${process.env.NEXT_PUBLIC_API_URL}/events`);
+
+    // Копируем все параметры из запроса в API URL
+    searchParams.forEach((value, key) => {
+      apiUrl.searchParams.append(key, value);
+    });
+
+    const response = await fetch(apiUrl.toString(), {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

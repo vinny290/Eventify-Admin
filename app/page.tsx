@@ -1,5 +1,5 @@
 // pages/EventsPage.tsx
-"use client"
+"use client";
 import {
   Card,
   CardHeader,
@@ -7,24 +7,25 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { format } from "date-fns"
-import { ru } from "date-fns/locale"
-import { useGetEvents } from "@/hook/events/useGetListEvents"
-import EventImage from "@/components/custom/EventImage"
-import React from "react"
-import { useRouter } from 'next/navigation'
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
+import { ru } from "date-fns/locale";
+import { useGetEvents } from "@/hook/events/useGetListEvents";
+import EventImage from "@/components/custom/EventImage";
+import React from "react";
+import { useRouter } from "next/navigation";
 
 export default function EventsPage() {
-  const { events, isLoading, errorGetListEvents, refetch } = useGetEvents()
-  const router = useRouter()
-
+  const { events, isLoading, errorGetListEvents, refetch } = useGetEvents({
+    organizationID: "708dee71-9744-4167-b82b-d337381b79c8",
+  });
+  const router = useRouter();
 
   const handleCardClick = (id: string) => {
-    router.push(`/event/${id}`)
-  }
+    router.push(`/event/${id}`);
+  };
 
   if (isLoading) {
     return (
@@ -46,7 +47,7 @@ export default function EventsPage() {
           </Card>
         ))}
       </div>
-    )
+    );
   }
 
   if (errorGetListEvents) {
@@ -55,7 +56,7 @@ export default function EventsPage() {
         <p className="text-red-500 text-lg">{errorGetListEvents}</p>
         <Button onClick={() => refetch()}>Попробовать снова</Button>
       </div>
-    )
+    );
   }
 
   if (!events || events.length === 0) {
@@ -63,7 +64,7 @@ export default function EventsPage() {
       <div className="flex flex-col items-center justify-center h-screen">
         <p className="text-gray-500 text-lg">Мероприятий не найдено</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -75,11 +76,7 @@ export default function EventsPage() {
           onClick={() => handleCardClick(event.id)}
         >
           <div className="p-0 h-[250px]">
-            <EventImage
-              imageId={event.cover}
-              alt={event.title}
-              fill
-            />
+            <EventImage imageId={event.cover} alt={event.title} fill />
           </div>
           <CardHeader>
             <CardTitle>{event.title}</CardTitle>
@@ -109,5 +106,5 @@ export default function EventsPage() {
         </Card>
       ))}
     </div>
-  )
+  );
 }

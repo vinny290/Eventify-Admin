@@ -2,6 +2,18 @@
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 
+interface Event {
+  // Здесь должно быть определение типа Event
+  // Добавьте необходимые поля в соответствии с вашей моделью данных
+  id: string;
+  [key: string]: any;
+}
+
+interface EventsQueryParams {
+  organizationID?: string;
+  [key: string]: string | undefined;
+}
+
 interface GetEventsResult {
   events: Event[] | null;
   isLoading: boolean;
@@ -9,7 +21,7 @@ interface GetEventsResult {
   refetch: () => void;
 }
 
-export function useGetEvents(): GetEventsResult {
+export function useGetEvents(params?: EventsQueryParams): GetEventsResult {
   const [events, setEvents] = useState<Event[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorGetListEvents, setErrorGetListEvents] = useState<string | null>(
@@ -26,7 +38,22 @@ export function useGetEvents(): GetEventsResult {
         return;
       }
 
-      const response = await fetch("/api/events/list-events", {
+      // Формируем URL с query-параметрами
+      let url = "/api/events/list-events";
+
+      if (params) {
+        const queryParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (value) queryParams.append(key, value);
+        });
+
+        const queryString = queryParams.toString();
+        if (queryString) {
+          url = `${url}?${queryString}`;
+        }
+      }
+
+      const response = await fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +81,7 @@ export function useGetEvents(): GetEventsResult {
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [JSON.stringify(params)]); // Зависимость от параметров запроса
 
   const refetch = () => {
     fetchEvents();
