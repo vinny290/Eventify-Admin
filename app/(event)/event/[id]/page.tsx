@@ -7,12 +7,17 @@ import { Skeleton } from '@/components/ui/skeleton'
 import useGetEventById from '@/hook/events/useGetEventById'
 import EventImage from '@/components/custom/EventImage'
 import React from 'react'
+import { useDeleteEvent } from '@/hook/events/useDeleteEvent'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 const EventPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const unwrappedParams = React.use(params)
+  const router = useRouter()
   const { id } = unwrappedParams
 
   const { event, loadingEventById, errorEventById } = useGetEventById(id)
+  const { deleteEvent } = useDeleteEvent();
 
   const formatDate = (timestamp: number) => {
     return format(new Date(timestamp * 1000), 'd MMMM yyyy', { locale: ru })
@@ -21,6 +26,18 @@ const EventPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const formatTime = (timestamp: number) => {
     return format(new Date(timestamp * 1000), 'HH:mm', { locale: ru })
   }
+
+  const handleDeleteEvent = async () => {
+    try {
+      await deleteEvent(id);
+      toast.success('Мероприятие удалено!')
+      router.push('/')
+
+    } catch (err) {
+        toast.error('Ошибка в удалении')
+        console.error(err)
+    }
+  };
 
   if (loadingEventById) {
     return (
@@ -63,12 +80,23 @@ const EventPage = ({ params }: { params: Promise<{ id: string }> }) => {
         />
       </div>
 
-      {/* Заголовок и кнопка подписки */}
+      {/* Заголовок и кнопки */}
       <div className="flex flex-col md:flex-row md:items-center gap-4 justify-around text-center md:text-left">
         <h1 className="text-3xl font-bold tracking-tight">{event.title}</h1>
-        <Button size="lg" className="w-full md:w-auto">
-          {event.subscribed ? 'Отписаться' : 'Участвовать'}
-        </Button>
+        <div className="flex gap-2">
+          <Button size="lg" className="w-full md:w-auto">
+            {event.subscribed ? 'Отписаться' : 'Участвовать'}
+          </Button>
+          {/* Кнопка удаления */}
+          <Button
+            size="lg"
+            variant="destructive"
+            onClick={handleDeleteEvent}
+            className="w-full md:w-auto"
+          >
+            Удалить событие
+          </Button>
+        </div>
       </div>
 
       {/* Основная информация */}
