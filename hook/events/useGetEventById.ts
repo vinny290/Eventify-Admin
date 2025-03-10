@@ -32,7 +32,7 @@ const useGetEventById = (id: string) => {
       }
 
       try {
-        const response = await axios.get<Event>(`/api/events/get-event-by-id/${id}`)
+        const response = await axios.get<Event>(`/api/events/getEventById/${id}`)
         setEvent(response.data)
         setErrorEventById(null)
       } catch (err) {
