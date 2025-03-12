@@ -5,8 +5,8 @@ export interface Event {
   cover: string;
   pictures: string[];
   description: string;
-  start: number;
-  end: number;
+  start?: number;
+  end?: number;
   location: string;
   capacity: number;
   categories: string[];

@@ -68,4 +68,29 @@ export class AuthStore {
     Cookies.remove('refreshToken')
     Cookies.remove('userID')
   }
+
+  async handleRefresh() {
+    try {
+      this.isRefreshing = true;
+      const response = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ refresh: this.refreshToken })
+      });
+      
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      
+      const data = await response.json();
+      this.login(data.accessToken, data.refreshToken, data.userID);
+      return true;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      this.logout();
+      return false;
+    } finally {
+      this.isRefreshing = false;
+    }
+  }
 }

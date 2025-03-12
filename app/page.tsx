@@ -18,9 +18,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 
 export default function EventsPage() {
-  const { events, isLoading, errorGetListEvents, refetch } = useGetEvents({
-    organizationID: "708dee71-9744-4167-b82b-d337381b79c8",
-  });
+  const { events, isLoading, errorGetListEvents, refetch } = useGetEvents();
   const router = useRouter();
 
   const handleCardClick = (id: string) => {

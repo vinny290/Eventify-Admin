@@ -73,3 +73,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* .react-datepicker {
+  @apply border border-border bg-background shadow-lg;
+}
+
+.react-datepicker__header {
+  @apply bg-muted border-b border-border;
+}
+
+.react-datepicker__current-month {
+  @apply text-foreground;
+}
+
+.react-datepicker__day {
+  @apply text-foreground hover:bg-accent;
+}
+
+.react-datepicker__day--selected {
+  @apply bg-primary text-primary-foreground;
+} */
