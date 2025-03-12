@@ -1,100 +1,108 @@
-"use client"
-import { Clock, Save, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import useGetEventById from '@/hook/events/useGetEventById'
-import EventImage from '@/components/custom/EventImage'
-import React, { useEffect, useState } from 'react'
-import { useDeleteEvent } from '@/hook/events/useDeleteEvent'
-import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
-import { useEditEvent } from '@/hook/events/useEditEvent'
-import { Textarea } from '@/components/ui/textarea'
-import { Input } from '@/components/ui/input'
-import eventStore from '@/stores/EventStore'
-import { observer } from 'mobx-react-lite'
-import { formatDateTime } from '@/lib/formatDateTime'
-import { utcToLocal } from '@/lib/time-picker'
-import { useUploadProfileImage } from '@/hook/files/useUpload'
+"use client";
+
+import React, { useEffect, useState } from 'react';
+import { observer } from 'mobx-react-lite';
+import { useRouter } from 'next/navigation';
+
+import { Clock, Save, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+
+import useGetEventById from '@/hook/events/useGetEventById';
+import { useDeleteEvent } from '@/hook/events/useDeleteEvent';
+import { useEditEvent } from '@/hook/events/useEditEvent';
+import { useUploadProfileImage } from '@/hook/files/useUpload';
+
+import EventImage from '@/components/custom/EventImage';
+import eventStore from '@/stores/EventStore';
+import { toast } from 'sonner';
+import { formatDateTime } from '@/lib/formatDateTime';
+import { utcToLocal } from '@/lib/time-picker';
 
 const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => {
-  const unwrappedParams = React.use(params)
-  const router = useRouter()
-  const { id } = unwrappedParams
-  const { event, loadingEventById, errorEventById } = useGetEventById(id)
-  const { deleteEvent } = useDeleteEvent()
-  const { editEvent } = useEditEvent()
-  const [isEditing, setIsEditing] = useState(false)
-  const { uploadImage, loadingUpload, errorUpload } = useUploadProfileImage()
+  // Извлекаем параметры и инициализируем роутер
+  const unwrappedParams = React.use(params);
+  const { id } = unwrappedParams;
+  const router = useRouter();
 
+  // Получаем данные события и состояния загрузки/ошибок
+  const { event, loadingEventById, errorEventById } = useGetEventById(id);
+  const { deleteEvent } = useDeleteEvent();
+  const { editEvent } = useEditEvent();
+  const { uploadImage, loadingUpload, errorUpload } = useUploadProfileImage();
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Обработка загрузки обложки события
   const handleCoverChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files || files.length === 0) return
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
     try {
-      const results = await uploadImage({ file: files[0] })
+      const results = await uploadImage({ file: files[0] });
       if (results.length > 0) {
-        eventStore.updateField('cover', results[0])
+        eventStore.updateField('cover', results[0]);
       }
     } catch (err) {
-      console.error("Ошибка загрузки обложки", err)
-      toast.error("Ошибка загрузки обложки")
+      console.error("Ошибка загрузки обложки", err);
+      toast.error("Ошибка загрузки обложки");
     }
-  }
+  };
 
+  // Синхронизируем событие с состоянием хранилища
   useEffect(() => {
     if (event) {
       const eventWithMs = {
         ...event,
         start: event.start * 1000,
         end: event.end * 1000,
-      }
-      eventStore.setEvent(eventWithMs)
+      };
+      eventStore.setEvent(eventWithMs);
     }
-  }, [event])
+  }, [event]);
 
+  // Переключение режима редактирования
   const handleEditToggle = () => {
-    setIsEditing(!isEditing)
-  }
+    setIsEditing(prev => !prev);
+  };
 
+  // Сохранение изменений события
   const handleSave = async () => {
-    const changes = eventStore.changedFields
-  
+    const changes = eventStore.changedFields;
     try {
-      await editEvent(id, changes)
-      toast.success('Изменения сохранены!')
-  
-      // Обновляем событие, приводя поля времени из секунд в миллисекунды,
-      // если они были изменены
-      const updatedEvent = { ...eventStore.originalEvent, ...changes }
+      await editEvent(id, changes);
+      toast.success('Изменения сохранены!');
+
+      // Приводим время к миллисекундам, если оно изменилось
+      const updatedEvent = { ...eventStore.originalEvent, ...changes };
       if (changes.start !== undefined) {
-        updatedEvent.start = changes.start * 1000
+        updatedEvent.start = changes.start * 1000;
       }
       if (changes.end !== undefined) {
-        updatedEvent.end = changes.end * 1000
+        updatedEvent.end = changes.end * 1000;
       }
-  
-      eventStore.setEvent(updatedEvent)
-      setIsEditing(false)
+      eventStore.setEvent(updatedEvent);
+      setIsEditing(false);
     } catch (error) {
-      toast.error('Ошибка сохранения изменений')
-      console.error(error)
+      toast.error('Ошибка сохранения изменений');
+      console.error(error);
     }
-  }
-  
+  };
 
-
-
+  // Удаление события
   const handleDeleteEvent = async () => {
     try {
-      await deleteEvent(id)
-      toast.success('Мероприятие удалено!')
-      router.push('/')
+      await deleteEvent(id);
+      toast.success('Мероприятие удалено!');
+      router.push('/');
     } catch (err) {
-      toast.error('Ошибка в удалении')
-      console.error(err)
+      toast.error('Ошибка в удалении');
+      console.error(err);
     }
-  }
+  };
 
+  // Рендер состояний загрузки, ошибок и отсутствия события
   if (loadingEventById) {
     return (
       <div className="container max-w-4xl py-6 space-y-6 mx-auto">
@@ -105,7 +113,7 @@ const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => 
           <Skeleton className="h-4 w-1/3 mx-auto" />
         </div>
       </div>
-    )
+    );
   }
 
   if (errorEventById) {
@@ -113,7 +121,7 @@ const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => 
       <div className="container max-w-4xl py-6 text-center text-destructive mx-auto">
         {errorEventById}
       </div>
-    )
+    );
   }
 
   if (!event) {
@@ -121,12 +129,13 @@ const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => 
       <div className="container max-w-4xl py-6 text-center mx-auto">
         Событие не найдено
       </div>
-    )
+    );
   }
 
+  // Определяем текущую обложку события
   const currentCover = isEditing
     ? eventStore.editedEvent.cover || eventStore.originalEvent?.cover || event.cover
-    : eventStore.originalEvent?.cover || event.cover
+    : eventStore.originalEvent?.cover || event.cover;
 
   return (
     <div className="container max-w-screen-2xl py-6 space-y-8 mx-auto">
@@ -139,24 +148,24 @@ const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => 
           className="rounded-lg"
         />
       </div>
+
+      {/* Загрузка новой обложки в режиме редактирования */}
       {isEditing && (
-        <div className="mt-2 text-center">
+        <div className="flex flex-col items-center w-1/3 mx-auto">
           <Input
             id="cover"
             type="file"
             accept="image/*"
             onChange={handleCoverChange}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="mx-auto p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {loadingUpload && <p>Загрузка обложки...</p>}
-          {errorUpload && <p className="text-red-500">{errorUpload}</p>}
+          {loadingUpload && <p className="mt-2">Загрузка обложки...</p>}
+          {errorUpload && <p className="mt-2 text-red-500">{errorUpload}</p>}
         </div>
       )}
-
-
       <div className="flex flex-col md:flex-row items-center gap-4 justify-center text-center max-w-2xl mx-auto">
-        <div className="w-full flex flex-col md:flex-row md:items-center items-center gap-4 justify-between">
-          {/* Заголовок */}
+        <div className="w-full flex flex-col md:flex-row md:items-center gap-4 justify-between">
+          {/* Заголовок события */}
           <div className="flex-1 md:text-left">
             {isEditing ? (
               <Input
@@ -171,7 +180,7 @@ const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => 
             )}
           </div>
 
-          {/* Кнопки */}
+          {/* Кнопки управления событием */}
           <div className="flex flex-wrap gap-2 justify-center md:justify-end w-full md:w-auto">
             <Button
               size="lg"
@@ -187,7 +196,6 @@ const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => 
                 'Редактировать'
               )}
             </Button>
-
             {isEditing && (
               <Button
                 variant="outline"
@@ -199,7 +207,6 @@ const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => 
                 Отмена
               </Button>
             )}
-
             <Button
               size="lg"
               variant="destructive"
@@ -212,10 +219,10 @@ const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => 
         </div>
       </div>
 
-      {/* Основная информация */}
+      {/* Основная информация о событии */}
       <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto px-4">
         <div className="space-y-6">
-          {/* Дата и время */}
+          {/* Дата и время события */}
           <div className="flex items-start gap-3">
             <Clock className="w-5 h-5 text-muted-foreground mt-1" />
             {isEditing ? (
@@ -230,13 +237,15 @@ const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => 
             ) : (
               <span onClick={() => setIsEditing(true)} className="cursor-pointer">
                 {eventStore.originalEvent?.start !== undefined || event.start !== undefined
-                  ? formatDateTime(eventStore.originalEvent ? eventStore.originalEvent.start! : event.start!)
+                  ? formatDateTime(
+                      eventStore.originalEvent
+                        ? eventStore.originalEvent.start!
+                        : event.start!
+                    )
                   : 'Дата не указана'}
               </span>
             )}
-
             <span className="text-muted-foreground">–</span>
-
             {isEditing ? (
               <Input
                 type="datetime-local"
@@ -249,7 +258,11 @@ const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => 
             ) : (
               <span onClick={() => setIsEditing(true)} className="cursor-pointer">
                 {eventStore.originalEvent?.end !== undefined || event.end !== undefined
-                  ? formatDateTime(eventStore.originalEvent ? eventStore.originalEvent.end! : event.end!)
+                  ? formatDateTime(
+                      eventStore.originalEvent
+                        ? eventStore.originalEvent.end!
+                        : event.end!
+                    )
                   : 'Дата не указана'}
               </span>
             )}
@@ -259,8 +272,7 @@ const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => 
           </p>
         </div>
 
-
-        {/* Описание */}
+        {/* Описание события */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-foreground">Описание</h3>
           {isEditing ? (
@@ -273,13 +285,15 @@ const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => 
             />
           ) : (
             <p className="text-muted-foreground whitespace-pre-line leading-relaxed">
-              {eventStore.originalEvent ? (eventStore.originalEvent.description || 'Описание отсутствует') : (event.description || 'Описание отсутствует')}
+              {eventStore.originalEvent
+                ? eventStore.originalEvent.description || 'Описание отсутствует'
+                : event.description || 'Описание отсутствует'}
             </p>
           )}
         </div>
       </div>
     </div>
-  )
-})
+  );
+});
 
-export default EventPage
+export default EventPage;
