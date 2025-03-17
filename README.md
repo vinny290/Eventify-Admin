@@ -9,6 +9,6 @@
    - **Запуск FrontEnd:**
      ```bash
      cd client
-     npm install
-     npm run dev
+     yarn install
+     yarn run dev
      ```
