@@ -36,14 +36,11 @@ export function AuthForm({
       {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-4xl font-bold">Вход в аккаунт</h1>
-        <p className="text-balance text-base text-muted-foreground">
-          Введите свой Email и Пароль для входа
-        </p>
+        <h1 className="text-4xl font-bold">Вход</h1>
       </div>
 
       <div className="grid gap-6">
-        <div className="grid gap-2">
+        <div className="grid gap-2 text-gray-600">
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
@@ -53,11 +50,12 @@ export function AuthForm({
             value={loginData.email}
             onChange={handleInputChange}
             required
+            className="bg-gray-100 border-gray-300"
           />
         </div>
 
         <div className="grid gap-2">
-          <div className="flex items-center">
+          <div className="flex items-center text-gray-600">
             <Label htmlFor="password">Пароль</Label>
           </div>
           <Input
@@ -67,10 +65,20 @@ export function AuthForm({
             value={loginData.password}
             onChange={handleInputChange}
             required
+            className="bg-gray-100 border-gray-300"
           />
           {errorLoginMessage && (
             <p className="text-red-500 text-sm">{errorLoginMessage}</p>
           )}
+          
+          <div className="flex items-center gap-6">
+          <a
+            href="#resetpassword"
+            className="hover:underline dark:text-white/60 hover:text-primary-light dark:hover:text-white transition-colors duration-200"
+          >
+            Не помню пароль
+          </a>
+          </div>
         </div>
 
         <Button
@@ -80,6 +88,17 @@ export function AuthForm({
         >
           {isLoading ? 'Загрузка...' : 'Вход'}
         </Button>
+
+        <div className="flex items-center gap-6 justify-center">
+          <p>Еще нет аккаунта?{' '}
+          <a
+            href="#registration"
+            className="underline dark:text-white/60 hover:text-primary-light dark:hover:text-white transition-colors duration-200"
+          >
+            Регистрация
+          </a>
+          </p>
+        </div>
       </div>
     </form>
   )

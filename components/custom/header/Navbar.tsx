@@ -66,7 +66,7 @@ const Navbar = observer(() => {
           ) : (
             <Link href="/auth">
               <Button className="text-black">
-                Войти
+                Регистрация
               </Button>
             </Link>
           )}
