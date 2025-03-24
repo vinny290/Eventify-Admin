@@ -29,7 +29,7 @@ const Navbar = observer(() => {
         <Link href="/">
           <div className="flex items-center gap-2">
             <Image
-              src="/images/header/logo-light.svg"
+              src="/images/logo-light.svg"
               width={8}
               height={8}
               alt="Eventify"

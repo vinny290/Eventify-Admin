@@ -93,14 +93,6 @@ export default function EventsPage() {
               <p className="text-sm text-gray-600">{event.location}</p>
             </div>
           </CardContent>
-          <CardFooter>
-            <Button
-              variant={event.subscribed ? "secondary" : "default"}
-              className="w-full"
-            >
-              {event.subscribed ? "Вы записаны" : "Записаться"}
-            </Button>
-          </CardFooter>
         </Card>
       ))}
     </div>
