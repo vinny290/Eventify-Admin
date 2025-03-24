@@ -50,7 +50,7 @@ export function AuthForm({
             value={loginData.email}
             onChange={handleInputChange}
             required
-            className="bg-gray-100 border-gray-300"
+            className="bg-gray-100 border-0"
           />
         </div>
 
@@ -65,7 +65,7 @@ export function AuthForm({
             value={loginData.password}
             onChange={handleInputChange}
             required
-            className="bg-gray-100 border-gray-300"
+            className="bg-gray-100 border-0"
           />
           {errorLoginMessage && (
             <p className="text-red-500 text-sm">{errorLoginMessage}</p>
