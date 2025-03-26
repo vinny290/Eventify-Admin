@@ -89,16 +89,6 @@ export function AuthForm({
           {isLoading ? 'Загрузка...' : 'Вход'}
         </Button>
 
-        <div className="flex items-center gap-6 justify-center">
-          <p>Еще нет аккаунта?{' '}
-          <a
-            href="#registration"
-            className="underline dark:text-white/60 hover:text-primary-light dark:hover:text-white transition-colors duration-200"
-          >
-            Регистрация
-          </a>
-          </p>
-        </div>
       </div>
     </form>
   )
