@@ -99,7 +99,7 @@ export default function EventsPage() {
               </Badge>
               <Badge
                 variant="outline"
-                className="text-xs sm:text-sm truncate max-w-[120px]"
+                className="text-xs sm:text-sm"
               >
                 {event.location}
               </Badge>
