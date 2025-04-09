@@ -29,13 +29,13 @@ const Navbar = observer(() => {
         <Link href="/">
           <div className="flex items-center gap-2">
             <Image
-              src="/images/logo-light.svg"
+              src="/images/logo-light1.svg"
               width={8}
               height={8}
               alt="Eventify"
-              className="w-8 h-8"
+              className="w-12 h-12"
             />
-            <div className="text-xl font-medium bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-white/80 bg-clip-text text-transparent">
+            <div className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-white/80 bg-clip-text text-transparent">
               Eventify
             </div>
           </div>
@@ -43,7 +43,7 @@ const Navbar = observer(() => {
 
         {auth.accessToken && (
           <Link href="/event/create">
-            <p>Создание</p>
+           <Button className="bg-backgroundLight hover:bg-backgroundLight">Создание</Button>
           </Link>
         )}
 
@@ -57,11 +57,11 @@ const Navbar = observer(() => {
 
           {auth.accessToken ? (
             <Button
-              className="text-black"
+              className="text-red-text bg-red-bg"
               onClick={handleClickLogout}
               disabled={auth.isRefreshing}
             >
-              Выход
+              Выйти
             </Button>
           ) : (
             <Link href="/auth">

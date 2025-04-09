@@ -16,6 +16,7 @@ import { useGetEvents } from "@/hook/events/useGetListEvents";
 import EventImage from "@/components/custom/EventImage";
 import React from "react";
 import { useRouter } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 
 export default function EventsPage() {
   const { events, isLoading, errorGetListEvents, refetch } = useGetEvents();
@@ -66,33 +67,41 @@ export default function EventsPage() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
       {events.map((event: any) => (
         <Card
           key={event.id}
-          className="overflow-hidden cursor-pointer transition-shadow hover:shadow-lg"
+          className="overflow-hidden cursor-pointer transition-shadow hover:shadow-lg flex flex-col"
+          style={{ width: '400px', minHeight: '500px' }}
           onClick={() => handleCardClick(event.id)}
         >
           <div className="p-0 h-[250px]">
             <EventImage imageId={event.cover} alt={event.title} fill />
           </div>
           <CardHeader>
-            <CardTitle>{event.title}</CardTitle>
-            <CardDescription>
-              {format(new Date(event.start * 1000), "d MMMM yyyy, HH:mm", {
-                locale: ru,
-              })}
-            </CardDescription>
+            <CardTitle className="font-bold text-xl">{event.title}</CardTitle>
+            <div className="flex gap-2 flex-wrap">
+              <Badge variant="outline" className="text-base">
+                {format(new Date(event.start * 1000), "d MMMM yyyy", {
+                  locale: ru,
+                })}
+              </Badge>
+              <Badge variant="outline" className="text-base">
+                {format(new Date(event.start * 1000), "HH:mm", {
+                  locale: ru,
+                })}
+              </Badge>
+              <Badge variant="outline" className="text-sm">{event.location}</Badge>
+            </div>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 line-clamp-3">
+          <CardContent className="flex-grow">
+            <p className="text-base text-gray-600 line-clamp-3">
               {event.description}
             </p>
-            <div className="mt-4">
-              <p className="text-sm font-medium">Место:</p>
-              <p className="text-sm text-gray-600">{event.location}</p>
-            </div>
           </CardContent>
+          <CardFooter className="mt-auto">
+            <Button className="w-full">Подробнее</Button>
+          </CardFooter>
         </Card>
       ))}
     </div>
