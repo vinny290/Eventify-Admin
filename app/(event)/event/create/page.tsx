@@ -175,7 +175,7 @@ const EventCreatePage = () => {
           </Label>
           <Textarea
             name="description"
-            placeholder="Введите описание ивента"
+            placeholder="Введите описание события"
             value={eventData.description}
             onChange={handleChange}
             className="w-full p-3 border-none bg-gray-100 rounded-lg"
