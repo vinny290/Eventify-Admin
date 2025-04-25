@@ -157,17 +157,6 @@ const EventCreatePage = () => {
           />
           {loadingUpload && <p>Загрузка изображения...</p>}
           {errorUpload && <p className="text-red-500">{errorUpload}</p>}
-
-          {/* Отображение обложки через компонент */}
-          {eventData.cover && (
-            <div className="mt-2">
-              <ImageByIdComponent
-                id={eventData.cover}
-                alt="Загруженная обложка"
-                className="w-32 h-32 object-cover rounded-lg"
-              />
-            </div>
-          )}
         </div>
         <div className="grid w-full items-center gap-3">
           <Label htmlFor="description" className="text-gray-600 font-medium">
