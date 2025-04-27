@@ -12,8 +12,9 @@ const ImageByIdComponent: React.FC<ImageByIdProps> = ({ id, alt, className }) =>
 
   if (isLoading) return <p>Загрузка...</p>;
   if (error) return <p>Ошибка загрузки изображения</p>;
+  if (!imageUrl) return null;
 
-  return <img src={imageUrl || ""} alt={alt} className={className} />;
+  return <img src={imageUrl} alt={alt} className={className} />;
 };
 
 export default ImageByIdComponent;
