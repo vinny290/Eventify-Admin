@@ -1,4 +1,3 @@
-// AuthForm.tsx
 "use client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -6,6 +5,7 @@ import { Label } from "@/components/ui/label"
 import { useLogin } from '@/hook/auth/useLogin'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import Link from "next/link"
 
 export function AuthForm({
   className,
@@ -32,16 +32,16 @@ export function AuthForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className={cn("flex flex-col gap-6 ", className)}
+      className={cn("flex flex-col gap-6", className)}
       {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-4xl font-bold">Вход</h1>
+        <h1 className="text-3xl font-bold text-foreground">Вход</h1>
       </div>
 
       <div className="grid gap-6">
-        <div className="grid gap-2 text-gray-600">
-          <Label htmlFor="email">Email</Label>
+        <div className="grid gap-2">
+          <Label htmlFor="email" className="text-foreground">Email</Label>
           <Input
             id="email"
             name="email"
@@ -50,45 +50,52 @@ export function AuthForm({
             value={loginData.email}
             onChange={handleInputChange}
             required
-            className="bg-gray-100 border-0"
+            className="bg-background text-foreground"
           />
         </div>
 
-        <div className="grid gap-2">
-          <div className="flex items-center text-gray-600">
-            <Label htmlFor="password">Пароль</Label>
+        <div className="grid gap-3">
+          <div className="flex items-center">
+            <Label htmlFor="password" className="text-foreground">Пароль</Label>
           </div>
           <Input
             id="password"
             type="password"
             name="password"
+            placeholder="*******"
             value={loginData.password}
             onChange={handleInputChange}
             required
-            className="bg-gray-100 border-0"
+            className="bg-background text-foreground"
           />
           {errorLoginMessage && (
-            <p className="text-red-500 text-sm">{errorLoginMessage}</p>
+            <p className="text-destructive text-sm">{errorLoginMessage}</p>
           )}
           
-          <div className="flex items-center gap-6">
-          <a
-            href="#resetpassword"
-            className="hover:underline dark:text-white/60 hover:text-primary-light dark:hover:text-white transition-colors duration-200"
-          >
-            Не помню пароль
-          </a>
+          <div className="flex justify-between items-center">
+            <Link
+              href="#resetpassword"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              Не помню пароль
+            </Link>
           </div>
         </div>
 
         <Button
           type="submit"
-          className="w-full text-black"
+          className="w-full"
           disabled={isLoading}
         >
-          {isLoading ? 'Загрузка...' : 'Вход'}
+          {isLoading ? 'Загрузка...' : 'Войти'}
         </Button>
 
+        <div className="text-center text-sm text-muted-foreground">
+          Еще нет аккаунта?{' '}
+          <Link href="/register" className="text-primary hover:underline">
+            Регистрация
+          </Link>
+        </div>
       </div>
     </form>
   )

@@ -1,4 +1,3 @@
-// pages/EventsPage.tsx
 "use client";
 import {
   Card,
@@ -30,18 +29,18 @@ export default function EventsPage() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
         {Array.from({ length: 6 }).map((_, index) => (
-          <Card key={index}>
+          <Card key={index} className="bg-card">
             <CardHeader>
-              <Skeleton className="h-[200px] w-full rounded-md mb-4" />
-              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-[200px] w-full rounded-md mb-4 bg-muted" />
+              <Skeleton className="h-6 w-3/4 bg-muted" />
             </CardHeader>
             <CardContent>
-              <Skeleton className="h-4 w-full mb-2" />
-              <Skeleton className="h-4 w-2/3 mb-2" />
-              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-4 w-full mb-2 bg-muted" />
+              <Skeleton className="h-4 w-2/3 mb-2 bg-muted" />
+              <Skeleton className="h-4 w-1/2 bg-muted" />
             </CardContent>
             <CardFooter>
-              <Skeleton className="h-10 w-24" />
+              <Skeleton className="h-10 w-24 bg-muted" />
             </CardFooter>
           </Card>
         ))}
@@ -52,7 +51,7 @@ export default function EventsPage() {
   if (errorGetListEvents) {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-4">
-        <p className="text-red-500 text-lg">{errorGetListEvents}</p>
+        <p className="text-destructive">{errorGetListEvents}</p>
         <Button onClick={() => refetch()}>Попробовать снова</Button>
       </div>
     );
@@ -61,7 +60,7 @@ export default function EventsPage() {
   if (!events || events.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
-        <p className="text-gray-500 text-lg">Мероприятий не найдено</p>
+        <p className="text-muted-foreground">Мероприятий не найдено</p>
       </div>
     );
   }
@@ -71,7 +70,7 @@ export default function EventsPage() {
       {events.map((event: any) => (
         <Card
           key={event.id}
-          className="overflow-hidden cursor-pointer transition-shadow hover:shadow-lg flex flex-col w-full max-w-[400px] mx-auto min-h-[500px]"
+          className="overflow-hidden cursor-pointer transition-shadow hover:shadow-lg flex flex-col w-full max-w-[400px] mx-auto min-h-[500px] bg-card"
           onClick={() => handleCardClick(event.id)}
         >
           <div className="relative w-full aspect-video">
@@ -83,7 +82,7 @@ export default function EventsPage() {
             />
           </div>
           <CardHeader className="px-4 pt-4 pb-2">
-            <CardTitle className="font-bold text-lg sm:text-xl line-clamp-2">
+            <CardTitle className="font-bold text-lg sm:text-xl line-clamp-2 text-card-foreground">
               {event.title}
             </CardTitle>
             <div className="flex flex-wrap gap-1 mt-2">
@@ -97,16 +96,13 @@ export default function EventsPage() {
                   locale: ru,
                 })}
               </Badge>
-              <Badge
-                variant="outline"
-                className="text-xs sm:text-sm"
-              >
+              <Badge variant="outline" className="text-xs sm:text-sm">
                 {event.location}
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="px-4 pb-2 flex-grow">
-            <p className="text-sm sm:text-base text-gray-600 line-clamp-3">
+            <p className="text-sm sm:text-base text-muted-foreground line-clamp-3">
               {event.description}
             </p>
           </CardContent>

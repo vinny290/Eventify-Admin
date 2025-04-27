@@ -1,45 +1,51 @@
-import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import "./globals.css"
-import { AuthProvider } from '@/Provider/AuthProvider'
-import { Toaster } from '@/components/ui/sonner'
-import Navbar from '@/components/custom/header/Navbar'
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import { AuthProvider } from "@/Provider/AuthProvider";
+import { Toaster } from "@/components/ui/sonner";
+import Navbar from "@/components/custom/header/Navbar";
+import { ThemeProvider } from "@/components/custom/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-})
+});
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-})
+});
 
 export const metadata: Metadata = {
   title: "Eventify Admin App",
   description: "Эта Админ-панель приложения Eventify",
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru">
+    <html lang="ru" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <div className="w-full min-w-[360px] min-h-screen flex items-center px-4 md:px-8 flex-col">
-            <Toaster richColors />
-            <Navbar />
-            <div className="w-full pr-4 pl-4 md:px-8">
-              {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <div className="w-full min-w-[360px] min-h-screen flex items-center px-4 md:px-8 flex-col">
+              <Toaster richColors />
+              <Navbar />
+              <div className="w-full pr-4 pl-4 md:px-8">{children}</div>
             </div>
-          </div>
-        </AuthProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

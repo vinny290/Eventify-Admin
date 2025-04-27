@@ -13,6 +13,7 @@ export default {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
 			backgroundLight: 'hsl(var(--background-light))',
+			backgroundDark: 'hsl(var(--background-dark))',
 			red: {
 				text: 'hsl(var(--text-red))',
 				bg: 'hsl(var(--background-red))'
