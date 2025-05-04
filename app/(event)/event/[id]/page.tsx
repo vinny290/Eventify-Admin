@@ -20,6 +20,7 @@ import eventStore from '@/stores/EventStore';
 import { toast } from 'sonner';
 import { formatDateTime } from '@/lib/formatDateTime';
 import { utcToLocal } from '@/lib/time-picker';
+import useGetCategories from '@/hook/events/useGetCategories';
 
 const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => {
   // Извлекаем параметры и инициализируем роутер
@@ -138,158 +139,201 @@ const EventPage = observer(({ params }: { params: Promise<{ id: string }> }) => 
     : eventStore.originalEvent?.cover || event.cover;
 
   return (
-    <div className="container max-w-screen-2xl py-6 space-y-8 mx-auto">
-      {/* Обложка события */}
-      <div className="relative aspect-video mx-auto max-w-5xl">
-        <EventImage
-          imageId={currentCover}
-          alt={eventStore.originalEvent ? eventStore.originalEvent.title : event.title}
-          fill
-          className="rounded-lg"
-        />
-      </div>
+    <div className="container max-w-screen-lg py-10 px-4 mx-auto">
+      <div className="flex flex-col md:flex-row gap-6 items-start">
 
-      {/* Загрузка новой обложки в режиме редактирования */}
-      {isEditing && (
-        <div className="flex flex-col items-center w-1/3 mx-auto">
-          <Input
-            id="cover"
-            type="file"
-            accept="image/*"
-            onChange={handleCoverChange}
-            className="mx-auto p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {loadingUpload && <p className="mt-2">Загрузка обложки...</p>}
-          {errorUpload && <p className="mt-2 text-red-500">{errorUpload}</p>}
-        </div>
-      )}
-      <div className="flex flex-col md:flex-row items-center gap-4 justify-center text-center max-w-2xl mx-auto">
-        <div className="w-full flex flex-col md:flex-row md:items-center gap-4 justify-between">
-          {/* Заголовок события */}
-          <div className="flex-1 md:text-left">
-            {isEditing ? (
-              <Input
-                value={eventStore.editedEvent.title || ''}
-                onChange={(e) => eventStore.updateField('title', e.target.value)}
-                className="text-3xl font-bold bg-background border-primary/30 hover:border-primary/50 text-center md:text-left max-w-2xl"
-              />
-            ) : (
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                {eventStore.originalEvent ? eventStore.originalEvent.title : event.title}
-              </h1>
-            )}
+        {/* Левая часть */}
+        <div className="w-full md:w-1/3 flex flex-col items-center gap-3">
+          <div className="relative w-full aspect-[1/1] rounded-[30px] overflow-hidden">
+            <EventImage
+            imageId={currentCover}
+            alt={eventStore.originalEvent ? eventStore.originalEvent.title : event.title}
+            fill
+            className="object-cover"
+            />
+          </div>
+
+          {/* Теги */}
+          <div className="flex flex-wrap gap-3 justify-right">
+              {["DevOps", "Cloud", "ITCommunity", "SoftwareEngineering", "Development"].map((tag) => (
+                <span
+                  key={tag}
+                  className="text-sm px-3 py-1 rounded-full bg-muted text-foreground border"
+                >
+                  {tag}
+                </span>
+              ))}
           </div>
 
           {/* Кнопки управления событием */}
-          <div className="flex flex-wrap gap-2 justify-center md:justify-end w-full md:w-auto">
-            <Button
-              size="lg"
-              onClick={isEditing ? handleSave : handleEditToggle}
-              className="w-full md:w-auto bg-primary"
-            >
-              {isEditing ? (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                  Сохранить
-                </>
-              ) : (
-                'Редактировать'
-              )}
-            </Button>
-            {isEditing && (
+          <div className="flex flex-wrap gap-2 w-full md:w-auto">
               <Button
-                variant="outline"
-                size="lg"
-                onClick={() => setIsEditing(false)}
-                className="w-full md:w-auto border-destructive text-destructive hover:bg-destructive/10"
+                style={{
+                  width: isEditing ? 156 : 330,
+                  height: 40,
+                }}
+                onClick={isEditing ? handleSave : handleEditToggle}
+                className="w-full md:w-auto bg-primary px-6 py-3 font-semibold"
               >
-                <X className="mr-2 h-4 w-4" />
-                Отмена
+                {isEditing ? (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Сохранить
+                  </>
+                ) : (
+                  'Редактировать'
+                )}
               </Button>
-            )}
-            <Button
-              size="lg"
-              variant="destructive"
-              onClick={handleDeleteEvent}
-              className="w-full md:w-auto"
-            >
-              Удалить
-            </Button>
+            
+              {isEditing && (
+                <Button
+                  variant="outline"
+                  style={{
+                    width: 155,
+                    height: 40,
+                  }}
+                  onClick={() => setIsEditing(false)}
+                  className="w-full md:w-auto border-destructive text-destructive hover:bg-destructive/10"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Отмена
+                </Button>
+              )}
           </div>
-        </div>
-      </div>
 
-      {/* Основная информация о событии */}
-      <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto px-4">
-        <div className="space-y-6">
-          {/* Дата и время события */}
-          <div className="flex items-start gap-3">
-            <Clock className="w-5 h-5 text-muted-foreground mt-1" />
-            {isEditing ? (
-              <Input
-                type="datetime-local"
-                value={utcToLocal(eventStore.editedEvent.start || 0)}
-                onChange={(e) =>
-                  eventStore.updateField('start', new Date(e.target.value).getTime())
-                }
-                className="w-full px-3 py-2 border rounded-lg bg-background"
-              />
-            ) : (
-              <span onClick={() => setIsEditing(true)} className="cursor-pointer">
-                {eventStore.originalEvent?.start !== undefined || event.start !== undefined
-                  ? formatDateTime(
-                      eventStore.originalEvent
-                        ? eventStore.originalEvent.start!
-                        : event.start!
-                    )
-                  : 'Дата не указана'}
-              </span>
-            )}
-            <span className="text-muted-foreground">–</span>
-            {isEditing ? (
-              <Input
-                type="datetime-local"
-                value={utcToLocal(eventStore.editedEvent.end || 0)}
-                onChange={(e) =>
-                  eventStore.updateField('end', new Date(e.target.value).getTime())
-                }
-                className="w-full px-3 py-2 border rounded-lg bg-background"
-              />
-            ) : (
-              <span onClick={() => setIsEditing(true)} className="cursor-pointer">
-                {eventStore.originalEvent?.end !== undefined || event.end !== undefined
-                  ? formatDateTime(
-                      eventStore.originalEvent
-                        ? eventStore.originalEvent.end!
-                        : event.end!
-                    )
-                  : 'Дата не указана'}
-              </span>
-            )}
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Выберите время начала и окончания
-          </p>
-        </div>
+            <div className="flex justify-center md:justify-end w-full md:w-auto">
+              <Button
+                style={{
+                  width: 330,
+                  height: 40
+                }}
+                variant="destructive"
+                onClick={handleDeleteEvent}
+                className="w-full md:w-auto"
+              >
+                Удалить
+              </Button>
+            </div>
 
-        {/* Описание события */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground">Описание</h3>
-          {isEditing ? (
-            <Textarea
-              value={eventStore.editedEvent.description || ''}
-              onChange={(e) => eventStore.updateField('description', e.target.value)}
-              rows={6}
-              className="bg-background border-primary/30 hover:border-primary/50 resize-none"
-              placeholder="Добавьте подробное описание мероприятия..."
+            {/* Информация об организаторе */}
+            <div className="w-full space-y-2 mt-8">
+              <h3 className="text-sm font-semibold text-[#808080] text-left">Организатор</h3>
+
+              <div className="border-t-2 border-[D9D9D9] mt-2" />
+                <div className="flex items-center gap-4 mt-2"> 
+                  <div className="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center">
+                    <span className="text-white text">ITAM</span>
+                  </div>
+                <div className="flex flex-col justify-center">
+                <span className="text-base font-medium text-foreground">IT At MISIS</span>
+                </div>
+              </div>
+          </div> 
+        </div> 
+
+        {/* Загрузка новой обложки в режиме редактирования */}
+        {isEditing && (
+          <div className="flex flex-col items-center w-1/3 mx-auto">
+            <Input
+              id="cover"
+              type="file"
+              accept="image/*"
+              onChange={handleCoverChange}
+              className="mx-auto p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          ) : (
-            <p className="text-muted-foreground whitespace-pre-line leading-relaxed">
-              {eventStore.originalEvent
-                ? eventStore.originalEvent.description || 'Описание отсутствует'
-                : event.description || 'Описание отсутствует'}
-            </p>
-          )}
+            {loadingUpload && <p className="mt-2">Загрузка обложки...</p>}
+            {errorUpload && <p className="mt-2 text-red-500">{errorUpload}</p>}
+          </div>
+        )}
+        <div className="w-full md:w-1 flex flex-col items-center justify-start gap-6"></div>
+
+        {/* Правая часть */}
+        <div className="w-full flex justify-end">
+            <div className="w-full md:w-10/2 flex flex-col items-center justify-start gap-6">
+
+            {/* Заголовок события */}
+            <div className="w-full text-left">
+              {isEditing ? (
+                <Input
+                  value={eventStore.editedEvent.title || ''}
+                  onChange={(e) => eventStore.updateField('title', e.target.value)}
+                  className="text-3xl font-bold bg-background border-primary/30 hover:border-primary/50 text-center w-full"
+                />
+              ) : (
+                  <h1 className="text-5xl font-bold tracking-tight text-foreground">
+                    {eventStore.originalEvent ? eventStore.originalEvent.title : event.title}
+                    </h1>
+                  )}
+              </div>
+
+            {/* Время события */}
+            <div className="w-full space-y-2">
+              <div className="flex items-start gap-3 justify-center">
+                <Clock className="w-5 h-5 text-muted-foreground mt-1" />
+                {isEditing ? (
+                  <>
+                    <Input
+                      type="datetime-local"
+                      value={utcToLocal(eventStore.editedEvent.start || 0)}
+                      onChange={(e) =>
+                        eventStore.updateField('start', new Date(e.target.value).getTime())
+                      }
+                      className="w-full px-3 py-2 border rounded-lg bg-background"
+                    />
+                    <span className="text-muted-foreground">–</span>
+                    <Input
+                      type="datetime-local"
+                      value={utcToLocal(eventStore.editedEvent.end || 0)}
+                      onChange={(e) =>
+                        eventStore.updateField('end', new Date(e.target.value).getTime())
+                      }
+                      className="w-full px-3 py-2 border rounded-lg bg-background"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <span onClick={() => setIsEditing(true)} className="cursor-pointer">
+                      {formatDateTime(
+                        eventStore.originalEvent
+                          ? eventStore.originalEvent.start!
+                          : event.start!
+                      )}
+                    </span>
+                    <span className="text-muted-foreground">–</span>
+                    <span onClick={() => setIsEditing(true)} className="cursor-pointer">
+                      {formatDateTime(
+                        eventStore.originalEvent
+                          ? eventStore.originalEvent.end!
+                          : event.end!
+                      )}
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Описание события */}
+            <div className="w-full space-y-4">
+              <h3 className="text-lg font-semibold text-[#808080] text-left">О событии</h3>
+              <div className="border-t-2 border-[D9D9D9] mt-6" />
+              {isEditing ? (
+                <Textarea
+                  value={eventStore.editedEvent.description || ''}
+                  onChange={(e) => eventStore.updateField('description', e.target.value)}
+                  rows={6}
+                  className="bg-background border-primary/30 hover:border-primary/50 resize-none w-full"
+                  placeholder="Добавьте подробное описание мероприятия..."
+                />
+              ) : (
+                <p className="text-muted-foreground whitespace-pre-line leading-relaxed text-left">
+                  {eventStore.originalEvent
+                    ? eventStore.originalEvent.description || 'Описание отсутствует'
+                    : event.description || 'Описание отсутствует'}
+                </p>
+              )}
+              <div className="border-b-2 border-[D9D9D9] mt-6" />
+              </div>
+            </div>
         </div>
       </div>
     </div>
