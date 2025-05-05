@@ -138,16 +138,16 @@ const EventCreatePage = () => {
   };
 
   return (
-    <Card className="max-w-xl mx-auto mt-10 p-10 bg-white rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.05)] border-none">
+    <Card className="max-w-xl mx-auto mt-10 p-10 bg-card rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.05)] border-none">
       <div className="flex mb-6 gap-5">
         <button onClick={() => router.push("/")}>
           <ChevronLeft className="h-8 w-8 mt-1" />
         </button>
-        <h1 className="text-3xl font-bold text-gray-800">Создание события</h1>
+        <h1 className="text-3xl font-bold text-foreground">Создание события</h1>
       </div>
       <form className="space-y-6 w-full" onSubmit={handleSubmit}>
         <div className="grid w-full items-center gap-3">
-          <Label htmlFor="title" className="text-gray-600 font-medium">
+          <Label htmlFor="title" className="secondary-text font-medium">
             Название
           </Label>
           <Input
@@ -156,12 +156,15 @@ const EventCreatePage = () => {
             placeholder="Введите название события"
             value={eventData.title}
             onChange={handleChange}
-            className="w-full p-3 border-none bg-gray-100 rounded-lg"
+            className="w-full p-3 border-none input rounded-lg"
             required
           />
         </div>
         <div className="grid w-full items-center gap-3">
-          <Label htmlFor="organizationID" className="text-gray-600 font-medium">
+          <Label
+            htmlFor="organizationID"
+            className="secondary-text font-medium"
+          >
             ID организатора
           </Label>
           <Input
@@ -170,12 +173,12 @@ const EventCreatePage = () => {
             placeholder="Введите ID организатора"
             value={eventData.organizationID}
             onChange={handleChange}
-            className="w-full p-3 border-none bg-gray-100 rounded-lg"
+            className="w-full p-3 border-none input rounded-lg"
             required
           />
         </div>
         <div className="grid w-full items-center gap-3">
-          <Label htmlFor="cover" className="text-gray-600 font-medium">
+          <Label htmlFor="cover" className="secondary-text font-medium">
             Обложка
           </Label>
           <Input
@@ -183,14 +186,14 @@ const EventCreatePage = () => {
             type="file"
             multiple
             onChange={handleFileChange}
-            className="w-full p-2 border-none bg-gray-100 rounded-lg"
+            className="w-full p-2 border-none input rounded-lg"
             accept="image/*"
           />
           {loadingUpload && <p>Загрузка изображения...</p>}
           {errorUpload && <p className="text-red-500">{errorUpload}</p>}
         </div>
         <div className="grid w-full items-center gap-3">
-          <Label htmlFor="photos" className="text-gray-600 font-medium">
+          <Label htmlFor="photos" className="secondary-text font-medium">
             Фотографии
           </Label>
           <Input
@@ -198,14 +201,14 @@ const EventCreatePage = () => {
             type="file"
             multiple
             onChange={handlePhotosChange}
-            className="w-full p-2 border-none bg-gray-100 rounded-lg"
+            className="w-full p-2 border-none input rounded-lg"
             accept="image/*"
           />
           {loadingUpload && <p>Загрузка фотографий...</p>}
           {errorUpload && <p className="text-red-500">{errorUpload}</p>}
         </div>
         <div className="grid w-full items-center gap-3">
-          <Label htmlFor="description" className="text-gray-600 font-medium">
+          <Label htmlFor="description" className="secondary-text font-medium">
             Описание
           </Label>
           <Textarea
@@ -213,11 +216,11 @@ const EventCreatePage = () => {
             placeholder="Введите описание события"
             value={eventData.description}
             onChange={handleChange}
-            className="w-full p-3 border-none bg-gray-100 rounded-lg"
+            className="w-full p-3 border-none input rounded-lg"
           />
         </div>
         <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="start" className="text-gray-600 font-medium">
+          <Label htmlFor="start" className="secondary-text font-medium">
             Дата начала события
           </Label>
           <Input
@@ -225,12 +228,12 @@ const EventCreatePage = () => {
             name="start"
             value={eventData.start}
             onChange={handleChange}
-            className="w-full p-3 border-none bg-gray-100 rounded-lg"
+            className="w-full p-3 border-none input rounded-lg"
             required
           />
         </div>
         <div className="grid w-full items-center gap-3">
-          <Label htmlFor="end" className="text-gray-600 font-medium">
+          <Label htmlFor="end" className="secondary-text font-medium">
             Дата окончания события
           </Label>
           <Input
@@ -238,12 +241,12 @@ const EventCreatePage = () => {
             name="end"
             value={eventData.end}
             onChange={handleChange}
-            className="w-full p-3 border-none bg-gray-100 rounded-lg"
+            className="w-full p-3 border-none input rounded-lg"
             required
           />
         </div>
         <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="location" className="text-gray-600 font-medium">
+          <Label htmlFor="location" className="secondary-text font-medium">
             Место проведения
           </Label>
           <Input
@@ -252,12 +255,12 @@ const EventCreatePage = () => {
             placeholder="Например: НИТУ МИСИС, Б-827"
             value={eventData.location}
             onChange={handleChange}
-            className="w-full p-3 border-none bg-gray-100 rounded-lg"
+            className="w-full p-3 border-none input rounded-lg"
             required
           />
         </div>
         <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="categories" className="text-gray-600 font-medium">
+          <Label htmlFor="categories" className="secondary-text font-medium">
             Категории
           </Label>
           {loadingGetListCategories ? (
@@ -267,7 +270,7 @@ const EventCreatePage = () => {
           ) : (
             <>
               <Select value="" onValueChange={handleCategoryChange}>
-                <SelectTrigger className="w-full p-3 border-none bg-gray-100 rounded-lg">
+                <SelectTrigger className="w-full p-3 border-none bg-input rounded-lg">
                   <SelectValue placeholder="Выберите категории" />
                 </SelectTrigger>
                 <SelectContent>
