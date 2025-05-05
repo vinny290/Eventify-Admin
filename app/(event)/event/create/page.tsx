@@ -31,7 +31,7 @@ const EventCreatePage = () => {
     end: "",
     location: "",
     categories: [] as string[],
-    organizationID: "708dee71-9744-4167-b82b-d337381b79c8",
+    organizationID: "",
   });
 
   const { categories, loadingGetListCategories, errorGetListCategories } =
@@ -41,7 +41,7 @@ const EventCreatePage = () => {
     useCreateEvent();
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setEventData((prevState) => ({
@@ -79,12 +79,12 @@ const EventCreatePage = () => {
 
     const filesArray = Array.from(files).slice(
       0,
-      5 - eventData.pictures.length,
+      5 - eventData.pictures.length
     );
 
     try {
       const results = await Promise.all(
-        filesArray.map((file) => uploadImage({ file })),
+        filesArray.map((file) => uploadImage({ file }))
       );
 
       const newIds = results.flat();
@@ -96,6 +96,27 @@ const EventCreatePage = () => {
       }));
     } catch (err) {
       console.error("Ошибка загрузки:", err);
+    }
+  };
+
+  const handlePhotosChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    const filesArray = Array.from(files).slice(
+      0,
+      5 - eventData.pictures.length
+    );
+    try {
+      const results = await Promise.all(
+        filesArray.map((file) => uploadImage({ file }))
+      );
+      const newIds = results.flat();
+      setEventData((prev) => ({
+        ...prev,
+        pictures: [...prev.pictures, ...newIds].slice(0, 5),
+      }));
+    } catch (err) {
+      console.error("Ошибка загрузки фотографий:", err);
     }
   };
 
@@ -119,14 +140,10 @@ const EventCreatePage = () => {
   return (
     <Card className="max-w-xl mx-auto mt-10 p-10 bg-white rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.05)] border-none">
       <div className="flex mb-6 gap-5">
-        <button
-          onClick={() => router.push("/")}
-        >
+        <button onClick={() => router.push("/")}>
           <ChevronLeft className="h-8 w-8 mt-1" />
         </button>
-        <h1 className="text-3xl font-bold text-gray-800">
-          Создание события
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-800">Создание события</h1>
       </div>
       <form className="space-y-6 w-full" onSubmit={handleSubmit}>
         <div className="grid w-full items-center gap-3">
@@ -138,6 +155,20 @@ const EventCreatePage = () => {
             name="title"
             placeholder="Введите название события"
             value={eventData.title}
+            onChange={handleChange}
+            className="w-full p-3 border-none bg-gray-100 rounded-lg"
+            required
+          />
+        </div>
+        <div className="grid w-full items-center gap-3">
+          <Label htmlFor="organizationID" className="text-gray-600 font-medium">
+            ID организатора
+          </Label>
+          <Input
+            type="text"
+            name="organizationID"
+            placeholder="Введите ID организатора"
+            value={eventData.organizationID}
             onChange={handleChange}
             className="w-full p-3 border-none bg-gray-100 rounded-lg"
             required
@@ -156,6 +187,21 @@ const EventCreatePage = () => {
             accept="image/*"
           />
           {loadingUpload && <p>Загрузка изображения...</p>}
+          {errorUpload && <p className="text-red-500">{errorUpload}</p>}
+        </div>
+        <div className="grid w-full items-center gap-3">
+          <Label htmlFor="photos" className="text-gray-600 font-medium">
+            Фотографии
+          </Label>
+          <Input
+            id="photos"
+            type="file"
+            multiple
+            onChange={handlePhotosChange}
+            className="w-full p-2 border-none bg-gray-100 rounded-lg"
+            accept="image/*"
+          />
+          {loadingUpload && <p>Загрузка фотографий...</p>}
           {errorUpload && <p className="text-red-500">{errorUpload}</p>}
         </div>
         <div className="grid w-full items-center gap-3">
