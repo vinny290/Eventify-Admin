@@ -7,6 +7,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
@@ -59,8 +60,24 @@ export default function EventsPage() {
 
   if (!events || events.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <p className="text-muted-foreground">Мероприятий не найдено</p>
+      <div className="flex flex-col items-center justify-center text-center px-4 py-12">
+        <h2 className="text-6xl font-bold mb-2">Oops!</h2>
+        <p className="text-lg font-semibold mb-6">
+          Тут пока пусто, давай создадим
+          <br />
+          твоё первое событие!
+        </p>
+        <Image
+          src="/images/no-events.svg"
+          alt="Нет событий"
+          className="w-full max-w-md mb-6"
+        />
+        <Button
+          className="w-1/4 text-black font-semibold py-3 rounded-lg transition duration-200"
+          onClick={() => router.push("/event/create")}
+        >
+          Создать
+        </Button>
       </div>
     );
   }
