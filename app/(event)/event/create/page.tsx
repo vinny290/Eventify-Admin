@@ -138,7 +138,7 @@ const EventCreatePage = () => {
   };
 
   return (
-    <Card className="max-w-xl mx-auto mt-10 p-10 bg-card rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.05)] border-none">
+    <Card className="max-w-3xl mx-auto mt-10 p-10 bg-card rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.05)] border-none">
       <div className="flex mb-6 gap-5">
         <button onClick={() => router.push("/")}>
           <ChevronLeft className="h-8 w-8 mt-1" />
@@ -213,10 +213,10 @@ const EventCreatePage = () => {
           </Label>
           <Textarea
             name="description"
-            placeholder="Введите описание события"
+            placeholder="Введите описание вашего события"
             value={eventData.description}
             onChange={handleChange}
-            className="w-full p-3 border-none input rounded-lg"
+            className="w-full p-3 h-32 border-none input rounded-lg"
           />
         </div>
         <div className="grid w-full items-center gap-1.5">

@@ -12,6 +12,7 @@ export default {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
+			footer: 'hsl(var(--footer))',
 			backgroundLight: 'hsl(var(--background-light))',
 			backgroundDark: 'hsl(var(--background-dark))',
 			red: {

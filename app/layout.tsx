@@ -5,6 +5,7 @@ import { AuthProvider } from "@/Provider/AuthProvider";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/custom/header/Navbar";
 import { ThemeProvider } from "@/components/custom/theme-provider";
+import Footer from "@/components/custom/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,9 +28,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" suppressHydrationWarning>
+    <html lang="ru" suppressHydrationWarning className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
       >
         <ThemeProvider
           attribute="class"
@@ -38,10 +39,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <div className="w-full min-w-[360px] min-h-screen flex items-center px-4 md:px-8 flex-col">
+            <div className="flex flex-col min-h-screen">
               <Toaster richColors />
               <Navbar />
-              <div className="w-full pr-4 pl-4 md:px-8">{children}</div>
+              <main className="flex-1 px-4 md:px-8">{children}</main>
+              <Footer />
             </div>
           </AuthProvider>
         </ThemeProvider>
