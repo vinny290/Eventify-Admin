@@ -62,6 +62,10 @@ export function useGetEvents(params?: EventsQueryParams): GetEventsResult {
       });
 
       if (!response.ok) {
+        if (response.status === 404) {
+          setEvents([]);
+          return;
+        }
         const errorData = await response.json();
         setErrorGetListEvents(
           errorData.error || "Ошибка при получении событий",
