@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { observer } from "mobx-react-lite";
@@ -17,19 +17,20 @@ import {
 import { ArrowRight, LogOut, Menu } from "lucide-react";
 
 const Navbar = observer(() => {
-  const auth = useAuth()
-  const router = useRouter()
+  const auth = useAuth();
+  const router = useRouter();
 
   const handleClickLogout = async () => {
     try {
-      await auth.logout()
-      router.push('/')
-      toast.success('Успешный выход!')
+      await auth.logout();
+      router.push("/");
+      toast.success("Успешный выход!");
     } catch (error: any) {
-      toast.error(error.response?.data?.message
-        || 'Проблема выхода из аккаунта')
+      toast.error(
+        error.response?.data?.message || "Проблема выхода из аккаунта"
+      );
     }
-  }
+  };
 
   return (
     <nav className="w-full bg-white/[0.02] backdrop-blur-xl border-b border-gray-200 dark:border-white/5 z-50 dark:bg-background">
@@ -37,7 +38,7 @@ const Navbar = observer(() => {
         <Link href="/">
           <div className="flex items-center gap-2">
             <Image
-              src="/images/logo-light1.svg"
+              src="/images/logo-light.svg"
               width={8}
               height={8}
               alt="Eventify"
@@ -130,7 +131,7 @@ const Navbar = observer(() => {
         </div>
       </div>
     </nav>
-  )
-})
+  );
+});
 
-export default Navbar
+export default Navbar;
