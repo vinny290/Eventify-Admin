@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import useGetCategories from "@/hook/categories/useGetCategory";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/navigation";
-
-import { Clock, Save, X } from "lucide-react";
+import { Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,9 +18,7 @@ import { useUploadProfileImage } from "@/hook/files/useUpload";
 import EventImage from "@/components/custom/EventImage";
 import eventStore from "@/stores/EventStore";
 import { toast } from "sonner";
-import { formatDateTime } from "@/lib/formatDateTime";
 import { utcToLocal } from "@/lib/time-picker";
-import useGetCategories from "@/hook/events/useGetCategories";
 
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
@@ -34,6 +32,8 @@ const EventPage = observer(
 
     // Получаем данные события и состояния загрузки/ошибок
     const { event, loadingEventById, errorEventById } = useGetEventById(id);
+    // Получаем категории события
+    const { categories, loading: loadingCategories, error: errorCategories } = useGetCategories(event?.categories ?? []);
     const { deleteEvent } = useDeleteEvent();
     const { editEvent } = useEditEvent();
     const { uploadImage, loadingUpload, errorUpload } = useUploadProfileImage();
@@ -211,23 +211,21 @@ const EventPage = observer(
               </div>
             )}
 
-            {/* Теги */}
-            <div className="flex flex-wrap gap-3 justify-right mt-2">
-              {[
-                "DevOps",
-                "Cloud",
-                "ITCommunity",
-                "SoftwareEngineering",
-                "Development",
-              ].map((tag) => (
-                <span
-                  key={tag}
-                  className="text-sm px-3 py-1 rounded-full bg-muted text-foreground border"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+            {/* Категории */}
+            {loadingCategories ? (
+              <Skeleton className="w-full h-6 rounded" />
+            ) : (
+              <div className="flex flex-wrap gap-3 justify-right mt-2">
+                {categories.map((cat) => (
+                  <span
+                    key={cat.id}
+                    className="text-sm px-3 py-1 rounded-full bg-muted text-foreground border"
+                  >
+                    {cat.title}
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* Кнопки управления событием */}
             <div className="flex flex-wrap gap-2 w-full mt-3 md:w-auto">
