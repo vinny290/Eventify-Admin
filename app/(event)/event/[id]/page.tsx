@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import useGetEventById from "@/hook/events/useGetEventById";
+import useGetOrganizatorById from "@/hook/organization/useGetOrganizatorById";
 import { useDeleteEvent } from "@/hook/events/useDeleteEvent";
 import { useEditEvent } from "@/hook/events/useEditEvent";
 import { useUploadProfileImage } from "@/hook/files/useUpload";
