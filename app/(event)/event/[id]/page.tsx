@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 
 import useGetEventById from "@/hook/events/useGetEventById";
+import useGetOrganizatorById from "@/hook/organization/useGetOrganizatorById";
 import { useDeleteEvent } from "@/hook/events/useDeleteEvent";
 import { useEditEvent } from "@/hook/events/useEditEvent";
 import { useUploadProfileImage } from "@/hook/files/useUpload";
@@ -26,14 +27,21 @@ import useGetEventCategories from "@/hook/categories/useGetEventCategories";
 
 const EventPage = observer(
   ({ params }: { params: Promise<{ id: string }> }) => {
-    // Извлекаем параметры и инициализируем роутер
     const unwrappedParams = React.use(params);
     const { id } = unwrappedParams;
     const router = useRouter();
 
-    // Получаем данные события и состояния загрузки/ошибок
     const { event, loadingEventById, errorEventById } = useGetEventById(id);
-    const { categories, loading: loadingCategories, error: errorCategories } = useGetEventCategories(event?.categories ?? []);
+    const {
+      categories,
+      loading: loadingCategories,
+      error: errorCategories,
+    } = useGetEventCategories(event?.categories ?? []);
+    const {
+      organizator,
+      loading: loadingOrganizator,
+      errorOrganizatorById: errorOrganizatorById,
+    } = useGetOrganizatorById(event?.organizationID || "");
     const { deleteEvent } = useDeleteEvent();
     const { editEvent } = useEditEvent();
     const { uploadImage, loadingUpload, errorUpload } = useUploadProfileImage();
@@ -41,7 +49,6 @@ const EventPage = observer(
     const [isEditing, setIsEditing] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    // Обработка загрузки обложки события
     const handleCoverChange = async (
       e: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -58,7 +65,6 @@ const EventPage = observer(
       }
     };
 
-    // Синхронизируем событие с состоянием хранилища
     useEffect(() => {
       if (event) {
         const eventWithMs = {
@@ -70,19 +76,16 @@ const EventPage = observer(
       }
     }, [event]);
 
-    // Переключение режима редактирования
     const handleEditToggle = () => {
       setIsEditing((prev) => !prev);
     };
 
-    // Сохранение изменений события
     const handleSave = async () => {
       const changes = eventStore.changedFields;
       try {
         await editEvent(id, changes);
         toast.success("Изменения сохранены!");
 
-        // Приводим время к миллисекундам, если оно изменилось
         const updatedEvent = { ...eventStore.originalEvent, ...changes };
         if (changes.start !== undefined) {
           updatedEvent.start = changes.start * 1000;
@@ -98,7 +101,6 @@ const EventPage = observer(
       }
     };
 
-    // Удаление события
     const handleDeleteEvent = async () => {
       try {
         await deleteEvent(id);
@@ -110,7 +112,6 @@ const EventPage = observer(
       }
     };
 
-    // Рендер состояний загрузки, ошибок и отсутствия события
     if (loadingEventById) {
       return (
         <div className="container max-w-4xl py-6 space-y-6 mx-auto">
@@ -140,15 +141,11 @@ const EventPage = observer(
       );
     }
 
-    // Определяем текущую обложку события
-
-    // Утилита для капитализации
     function capitalizeFirstLetter(str: string) {
       if (!str) return "";
       return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    // Получаем список обложек и нормализуем в массив
     const rawCover = isEditing
       ? eventStore.editedEvent.cover ?? eventStore.originalEvent?.cover
       : eventStore.originalEvent?.cover ?? event.cover;
@@ -157,7 +154,6 @@ const EventPage = observer(
       ? rawCover
       : [rawCover].filter(Boolean);
 
-    // Перелистывание
     const showPrev = () =>
       setCurrentIndex((prev) => (prev > 0 ? prev - 1 : coversArray.length - 1));
     const showNext = () =>
@@ -194,7 +190,6 @@ const EventPage = observer(
               )}
             </div>
 
-            {/* Загрузка новой обложки в режиме редактирования */}
             {isEditing && (
               <div className="w-full flex flex-col text-center items-center p-0">
                 <Input
@@ -211,7 +206,6 @@ const EventPage = observer(
               </div>
             )}
 
-            {/* Категории */}
             {loadingCategories ? (
               <Skeleton className="w-full h-6 rounded" />
             ) : errorCategories ? (
@@ -222,8 +216,8 @@ const EventPage = observer(
                   <span
                     key={cat.id}
                     className="text-sm px-3 py-1 rounded-full"
-                    style={{ 
-                      backgroundColor: cat.color || '#f3f4f6',
+                    style={{
+                      backgroundColor: cat.color || "#f3f4f6",
                     }}
                   >
                     {cat.title}
@@ -232,8 +226,6 @@ const EventPage = observer(
               </div>
             )}
 
-
-            {/* Кнопки управления событием */}
             <div className="flex flex-wrap gap-2 w-full mt-3 md:w-auto">
               <Button
                 style={{
@@ -283,30 +275,60 @@ const EventPage = observer(
               </Button>
             </div>
 
-            {/* Информация об организаторе */}
+            {/* Блок организатора */}
             <div className="w-full space-y-2 mt-8">
               <h3 className="text-m font-raleway-samibold text-[#808080] text-left">
                 Организатор
               </h3>
 
               <div className="border-t-2 border-[D9D9D9] mt-2" />
-              <div className="flex items-center gap-4 mt-2">
-                <div className="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center">
-                  <span className="text-white text">ITAM</span>
+
+              {loadingOrganizator ? (
+                <div className="flex items-center gap-4 mt-2">
+                  <Skeleton className="w-12 h-12 rounded-full" />
+                  <Skeleton className="h-4 w-32" />
                 </div>
-                <div className="flex flex-col justify-center">
-                  <span className="text-base font-bold text-foreground">
-                    IT At MISIS
-                  </span>
+              ) : errorOrganizatorById ? (
+                <div className="text-red-500 text-sm">
+                  {errorOrganizatorById}
                 </div>
-              </div>
+              ) : organizator ? (
+                <div className="flex items-center gap-4 mt-2">
+                  <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                    {organizator.photoID ? (
+                      <EventImage
+                        imageId={organizator.photoID}
+                        alt={organizator.title}
+                        width={48}
+                        height={48}
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      <span className="text-gray-600 text-sm">No image</span>
+                    )}
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    <span className="text-base font-bold text-foreground">
+                      {organizator.title}
+                    </span>
+                    {organizator.description && (
+                      <span className="text-sm text-muted-foreground">
+                        {organizator.description}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-sm text-muted-foreground">
+                  Организатор не указан
+                </div>
+              )}
             </div>
           </div>
 
           {/* Правая часть */}
           <div className="w-full flex justify-end pl-6">
             <div className="w-full md:w-2xl flex flex-col items-start gap-6">
-              {/* Заголовок события */}
               <div className="w-full text-left font-raleway">
                 {isEditing ? (
                   <Input
@@ -326,7 +348,6 @@ const EventPage = observer(
               </div>
 
               <div className="space-y-2 mt-3 font-raleway text-left">
-                {/* Блок даты и времени */}
                 <div className="flex items-start gap-3 max-w-md">
                   <img
                     src="/images/calendar.svg"
@@ -377,7 +398,6 @@ const EventPage = observer(
                   </div>
                 </div>
 
-                {/* Блок места */}
                 <div className="flex items-center gap-3 max-w-md">
                   <img
                     src="/images/location.svg"
@@ -404,7 +424,6 @@ const EventPage = observer(
                 </div>
               </div>
 
-              {/* Описание события */}
               <div className="w-full space-y-4 mt-6">
                 <h3 className="text-lg font-semibold text-[#808080] text-left">
                   О событии
