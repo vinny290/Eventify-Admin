@@ -22,6 +22,7 @@ import { utcToLocal } from "@/lib/time-picker";
 
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
+import useGetEventCategories from "@/hook/categories/useGetEventCategories";
 
 const EventPage = observer(
   ({ params }: { params: Promise<{ id: string }> }) => {
@@ -32,8 +33,7 @@ const EventPage = observer(
 
     // Получаем данные события и состояния загрузки/ошибок
     const { event, loadingEventById, errorEventById } = useGetEventById(id);
-    // Получаем категории события
-    const { categories, loading: loadingCategories, error: errorCategories } = useGetCategories(event?.categories ?? []);
+    const { categories, loading: loadingCategories, error: errorCategories } = useGetEventCategories(event?.categories ?? []);
     const { deleteEvent } = useDeleteEvent();
     const { editEvent } = useEditEvent();
     const { uploadImage, loadingUpload, errorUpload } = useUploadProfileImage();
@@ -214,18 +214,24 @@ const EventPage = observer(
             {/* Категории */}
             {loadingCategories ? (
               <Skeleton className="w-full h-6 rounded" />
+            ) : errorCategories ? (
+              <div className="text-red-500 text-sm">{errorCategories}</div>
             ) : (
               <div className="flex flex-wrap gap-3 justify-right mt-2">
                 {categories.map((cat) => (
                   <span
                     key={cat.id}
-                    className="text-sm px-3 py-1 rounded-full bg-muted text-foreground border"
+                    className="text-sm px-3 py-1 rounded-full"
+                    style={{ 
+                      backgroundColor: cat.color || '#f3f4f6',
+                    }}
                   >
                     {cat.title}
                   </span>
                 ))}
               </div>
             )}
+
 
             {/* Кнопки управления событием */}
             <div className="flex flex-wrap gap-2 w-full mt-3 md:w-auto">
