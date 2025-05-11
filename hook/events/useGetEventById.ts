@@ -1,22 +1,8 @@
 "use client"
+
+import { Event } from "@/types/Event";
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-
-interface Event {
-  id: string
-  state: string
-  title: string
-  cover: string
-  pictures: string[]
-  description: string
-  start: number
-  end: number
-  location: string
-  capacity: number
-  categories: string[]
-  organizationID: string
-  subscribed: boolean
-}
 
 const useGetEventById = (id: string) => {
   const [event, setEvent] = useState<Event | null>(null)

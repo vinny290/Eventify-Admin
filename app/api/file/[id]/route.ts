@@ -1,12 +1,7 @@
 // app/api/v1/files/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-
-interface Params {
-  params: {
-    id: string;
-  };
-}
+import { Params } from "@/types/Params";
 
 export async function GET(
   request: NextRequest,

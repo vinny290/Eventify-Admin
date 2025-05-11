@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import useGetCategories from "@/hook/events/useGetCategories";
+import useGetCategories from "@/hook/categories/useGetCategories";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useUploadProfileImage } from "@/hook/files/useUpload";

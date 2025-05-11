@@ -2,13 +2,6 @@
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 
-interface Event {
-  // Здесь должно быть определение типа Event
-  // Добавьте необходимые поля в соответствии с вашей моделью данных
-  id: string;
-  [key: string]: any;
-}
-
 interface EventsQueryParams {
   organizationID?: string;
   [key: string]: string | undefined;

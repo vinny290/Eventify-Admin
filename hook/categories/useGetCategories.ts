@@ -1,13 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-
-interface Category {
-  id: string
-  title: string
-  color: string
-  cover: string
-}
+import { Category } from '@/types/Category'
 
 const useGetCategories = () => {
   const [categories, setCategories] = useState<Category[]>([])
@@ -41,5 +35,6 @@ const useGetCategories = () => {
 
   return { categories, loadingGetListCategories, errorGetListCategories }
 }
+
 
 export default useGetCategories
