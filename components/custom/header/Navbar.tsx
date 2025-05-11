@@ -35,22 +35,24 @@ const Navbar = observer(() => {
   return (
     <nav className="w-full bg-white/[0.02] backdrop-blur-xl border-b border-gray-200 dark:border-white/5 z-50 dark:bg-background">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <Link href="/">
-          <div className="flex items-center gap-2">
-            <Image
-              src="/images/logo-light.svg"
-              width={8}
-              height={8}
-              alt="Eventify"
-              className="w-12 h-12"
-            />
-            <div className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-white/80 bg-clip-text text-transparent">
-              Eventify
+        <div className="flex-1 flex justify-start">
+          <Link href="/">
+            <div className="flex items-center gap-2">
+              <Image
+                src="/images/logo-light.svg"
+                width={8}
+                height={8}
+                alt="Eventify"
+                className="w-12 h-12"
+              />
+              <div className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-white/80 bg-clip-text text-transparent">
+                Eventify
+              </div>
             </div>
-          </div>
-        </Link>
+          </Link>
+        </div>
 
-        <div className="hidden md:flex items-center gap-2.5">
+        <div className="flex-1 hidden md:flex justify-center">
           {auth.accessToken && (
             <Link href="/event/create">
               <Button className="bg-backgroundLight hover:bg-backgroundLight dark:bg-backgroundDark dark:text-white">
@@ -58,8 +60,10 @@ const Navbar = observer(() => {
               </Button>
             </Link>
           )}
+        </div>
 
-          <div className="flex items-center gap-6">
+        <div className="flex-1 flex justify-end">
+          <div className="hidden md:flex items-center gap-6">
             <a
               href="#contact"
               className="text-gray-600 dark:text-white/60 hover:text-primary-light dark:hover:text-white transition-colors duration-200"
@@ -83,51 +87,51 @@ const Navbar = observer(() => {
               </Link>
             )}
           </div>
-        </div>
 
-        <div className="md:hidden">
-          <ModeToggle />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 mr-4 mt-2">
-              {auth.accessToken && (
+          <div className="md:hidden">
+            <ModeToggle />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56 mr-4 mt-2">
+                {auth.accessToken && (
+                  <DropdownMenuItem
+                    onClick={() => router.push("/event/create")}
+                    className="cursor-pointer"
+                  >
+                    Создать событие
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
-                  onClick={() => router.push("/event/create")}
+                  onClick={() => router.push("#contact")}
                   className="cursor-pointer"
                 >
-                  Создать событие
+                  Контакты
                 </DropdownMenuItem>
-              )}
-              <DropdownMenuItem
-                onClick={() => router.push("#contact")}
-                className="cursor-pointer"
-              >
-                Контакты
-              </DropdownMenuItem>
-              {auth.accessToken ? (
-                <DropdownMenuItem
-                  onClick={handleClickLogout}
-                  disabled={auth.isRefreshing}
-                  className="cursor-pointer text-red-600 focus:text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-900/20"
-                >
-                  <LogOut className="h-4 w-4 mr-3" />
-                  Выход
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem
-                  onClick={() => router.push("/auth")}
-                  className="cursor-pointer"
-                >
-                  <ArrowRight className="h-4 w-4 mr-3" />
-                  Войти
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                {auth.accessToken ? (
+                  <DropdownMenuItem
+                    onClick={handleClickLogout}
+                    disabled={auth.isRefreshing}
+                    className="cursor-pointer text-red-600 focus:text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-900/20"
+                  >
+                    <LogOut className="h-4 w-4 mr-3" />
+                    Выход
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem
+                    onClick={() => router.push("/auth")}
+                    className="cursor-pointer"
+                  >
+                    <ArrowRight className="h-4 w-4 mr-3" />
+                    Войти
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </nav>

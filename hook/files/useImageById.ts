@@ -36,18 +36,15 @@ export function useImageById(
       try {
         // Исправляем путь для соответствия API-роуту
         const requestUrl = `/api/file/${id}`;
-        console.log(`Хук: Запрос изображения по URL: ${requestUrl}`);
 
         const response = await fetch(requestUrl, {
           signal: controller.signal,
           cache: "no-store",
         });
 
-        console.log(`Хук: Получен ответ со статусом: ${response.status}`);
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error(`Хук: Ошибка ответа: ${errorText}`);
           throw new Error(
             `Ошибка загрузки изображения: ${response.status} - ${errorText}`,
           );

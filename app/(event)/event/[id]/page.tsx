@@ -30,6 +30,7 @@ import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import MultiSelect from "@/components/custom/MultiSelect";
 import useGetCategories from "@/hook/categories/useGetCategories";
+import { useImageById } from "@/hook/files/useImageById";
 
 const EventPage = observer(
   ({ params }: { params: Promise<{ id: string }> }) => {
@@ -43,6 +44,11 @@ const EventPage = observer(
     const { deleteEvent } = useDeleteEvent();
     const { editEvent } = useEditEvent();
     const { uploadImage, loadingUpload } = useUploadProfileImage();
+    const { organizator, loadingGetOrganizatorById, errorGetOrganizatorById } =
+      useGetOrganizatorById(event?.organizationID ?? "");
+    const { imageUrl: organizatorImageUrl } = useImageById(
+      organizator?.photoID
+    );
 
     const [isEditing, setIsEditing] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -355,14 +361,22 @@ const EventPage = observer(
               </h3>
               <div className="border-t-2 border-[D9D9D9] mt-1 sm:mt-2" />
               <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-gray-600 flex items-center justify-center">
-                  <span className="text-white text-xs sm:text-sm md:text-base">
-                    ITAM
-                  </span>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-gray-600 flex items-center justify-center overflow-hidden">
+                  {organizatorImageUrl ? (
+                    <img
+                      src={organizatorImageUrl}
+                      alt={organizator?.title || "Organizator"}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-white text-xs sm:text-sm md:text-base">
+                      {organizator?.title?.charAt(0).toUpperCase()}
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-col justify-center">
                   <span className="text-xs sm:text-sm md:text-base font-bold text-foreground">
-                    IT At MISIS
+                    {organizator?.title}
                   </span>
                 </div>
               </div>

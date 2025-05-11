@@ -6,43 +6,44 @@ import axios from 'axios'
 
 const useGetOrganizatorById = (id: string) => {
     const [organizator, setOrganizator] = useState<Organizator | null>(null)
-    const [loading, setLoadingOrganizatorById] = useState<boolean>(true)
-    const [errorOrganizatorById, setErrorOrganizatorById] = useState<string | null>(null)
+    const [image, setImage] = useState()
+    const [loadingGetOrganizatorById, setLoadingGetOrganizatorById] = useState<boolean>(true)
+    const [errorGetOrganizatorById, setErrorGetOrganizatorById] = useState<string | null>(null)
 
     useEffect(() => {
         const fetchOrganizator = async () => {
             if (!id) {
-                setErrorOrganizatorById('Не указан ID события')
-                setLoadingOrganizatorById(false)
+                setErrorGetOrganizatorById('Не указан ID события')
+                setLoadingGetOrganizatorById(false)
                 return
             }
 
             try {
-                const response = await axios.get<Organizator>(`/api/organizations/${id}`)
+                const response = await axios.get<Organizator>(`/api/organizations/readOrganization/${id}`)
                 setOrganizator(response.data)
-                setErrorOrganizatorById(null)
+                setErrorGetOrganizatorById(null)
             } catch (err) {
                 if (axios.isAxiosError(err)) {
                     if (err.response?.status === 401) {
-                        setErrorOrganizatorById('Unauthorized: Недействительный или просроченный токен')
+                        setErrorGetOrganizatorById('Unauthorized: Недействительный или просроченный токен')
                     } else if (err.response?.status === 404) {
-                        setErrorOrganizatorById('Организатор не найден')
+                        setErrorGetOrganizatorById('Организатор не найден')
                     } else {
-                        setErrorOrganizatorById('Неизвестная ошибка')
+                        setErrorGetOrganizatorById('Неизвестная ошибка')
                     }
                     console.error('Error fetching event:', err)
                 } else {
-                    setErrorOrganizatorById('Неизвестная ошибка')
+                    setErrorGetOrganizatorById('Неизвестная ошибка')
                 }
             } finally {
-                setLoadingOrganizatorById(false)
+                setLoadingGetOrganizatorById(false)
             }
         }
 
         fetchOrganizator()
     }, [id])
 
-    return { organizator, loading, errorOrganizatorById }
+    return { organizator, loadingGetOrganizatorById, errorGetOrganizatorById }
 }
 
 export default useGetOrganizatorById
