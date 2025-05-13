@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
-import { cookies } from "next/headers";
+import { cookies } from 'next/headers';
 import axios from 'axios';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
   const { id } = await params;
-  
+
   if (!id) {
     return NextResponse.json(
       { error: "Не указан ID категории" },
@@ -36,14 +36,14 @@ export async function GET(
     return NextResponse.json(response.data);
   } catch (error) {
     console.error('Ошибка при получении категории:', error);
-    
+
     if (axios.isAxiosError(error)) {
       return NextResponse.json(
         { error: error.response?.data?.error || 'Ошибка сервера' },
         { status: error.response?.status || 500 }
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Внутренняя ошибка сервера' },
       { status: 500 }

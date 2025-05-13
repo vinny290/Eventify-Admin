@@ -1,11 +1,9 @@
-// app/api/v1/files/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { Params } from "@/types/Params";
 
 export async function GET(
   request: NextRequest,
-  { params }: Params,
+  { params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse> {
   const { id } = await params;
 
@@ -17,9 +15,8 @@ export async function GET(
   }
 
   try {
-    // Формируем URL для запроса к бэкенду
     const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/files/${id}`;
-    // Запрос к API для получения конкретного файла по ID
+
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
@@ -36,13 +33,9 @@ export async function GET(
       );
     }
 
-    // Получаем файл как бинарные данные
     const imageData = await response.arrayBuffer();
-
-    // Определяем тип контента из заголовков ответа
     const contentType = response.headers.get("content-type") || "image/jpeg";
 
-    // Возвращаем изображение с правильным типом контента
     return new NextResponse(imageData, {
       headers: {
         "Content-Type": contentType,

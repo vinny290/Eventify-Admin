@@ -74,7 +74,7 @@ const EventPage = observer(
     };
 
     useEffect(() => {
-      if (event) {
+      if (event && event.start !== undefined && event.end !== undefined) {
         const eventWithMs = {
           ...event,
           start: event.start * 1000,
