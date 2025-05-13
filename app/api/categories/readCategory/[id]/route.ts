@@ -1,10 +1,9 @@
-// app/api/categories/getCategoryById/[id]/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { cookies } from "next/headers";
 import axios from 'axios';
 
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   const { id } = await params;
