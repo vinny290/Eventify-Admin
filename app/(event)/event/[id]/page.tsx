@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/navigation";
-import { Save, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
