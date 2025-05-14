@@ -28,7 +28,7 @@ const Navbar = observer(() => {
       router.refresh();
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || "Проблема выхода из аккаунта"
+        error.response?.data?.message || "Проблема c выходом из аккаунта"
       );
     }
   };
