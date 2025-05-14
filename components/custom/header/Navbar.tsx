@@ -25,6 +25,7 @@ const Navbar = observer(() => {
       await auth.logout();
       router.push("/");
       toast.success("Успешный выход!");
+      router.refresh();
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || "Проблема выхода из аккаунта"
