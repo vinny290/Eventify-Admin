@@ -168,7 +168,7 @@ const EventPage = observer(
       <div className="container max-w-screen-lg py-8 md:py-16 px-4 mx-auto">
         {/* Модальное окно редактирования */}
         <Dialog open={isEditing} onOpenChange={setIsEditing}>
-          <DialogContent className="max-w-[95vw] md:max-w-[600px] dark:bg-card">
+          <DialogContent className="max-w-[95vw] md:max-w-[600px] max-h-[90%] overflow-y-auto dark:bg-card">
             <DialogHeader>
               <DialogTitle className="text-xl md:text-2xl">
                 Редактирование события
