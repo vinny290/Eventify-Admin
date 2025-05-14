@@ -2,7 +2,7 @@ import axios from 'axios'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export const config = {
-  matcher: ['/event/create'],
+  matcher: ['/event/create', '/'],
 }
 
 
