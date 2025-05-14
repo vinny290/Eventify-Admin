@@ -27,7 +27,6 @@ export function useLogin() {
         response.data.refreshToken,
         response.data.userID
       )
-      router.push('/')
     } catch (error: any) {
       console.error('Login error:', error)
       setErrorLoginMessage(
