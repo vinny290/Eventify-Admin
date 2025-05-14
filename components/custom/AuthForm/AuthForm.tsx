@@ -27,8 +27,9 @@ export function AuthForm({
     e.preventDefault();
     try {
       await handleLogin(e);
-      toast.success("Успешный вход!");
       router.push('/')
+      toast.success("Успешный вход!");
+      router.refresh();
     } catch {
       toast.error(errorLoginMessage || "Ошибка авторизации");
     }
