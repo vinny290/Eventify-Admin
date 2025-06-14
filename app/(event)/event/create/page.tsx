@@ -128,7 +128,6 @@ const EventCreatePage = () => {
         start: new Date(eventData.start).getTime() / 1000,
         end: new Date(eventData.end).getTime() / 1000,
       });
-      console.log("Созданный ивент:", createdEvent);
       toast.success("Мероприятие создано!");
       router.push("/");
     } catch (err) {

@@ -15,10 +15,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ArrowRight, LogOut, Menu } from "lucide-react";
+import { useTheme } from "next-themes";
 
 const Navbar = observer(() => {
   const auth = useAuth();
   const router = useRouter();
+  const { theme, resolvedTheme } = useTheme();
 
   const handleClickLogout = async () => {
     try {
@@ -39,11 +41,14 @@ const Navbar = observer(() => {
           <Link href="/">
             <div className="flex items-center gap-2">
               <Image
-                src="/images/logo-light.svg"
-                width={8}
-                height={8}
+                src={
+                  resolvedTheme === "dark"
+                    ? "/images/logo-dark.svg"
+                    : "/images/logo-light.svg"
+                }
+                width={50}
+                height={50}
                 alt="Eventify"
-                className="w-12 h-12"
               />
               <div className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-white/80 bg-clip-text text-transparent">
                 Eventify

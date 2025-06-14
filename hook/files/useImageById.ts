@@ -13,7 +13,7 @@ interface UseImageByIdResult {
  * @returns Объект с данными изображения, состоянием загрузки и ошибкой
  */
 export function useImageById(
-  id: string | null | undefined,
+  id: string | null | undefined
 ): UseImageByIdResult {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -22,7 +22,6 @@ export function useImageById(
   useEffect(() => {
     // Если ID не предоставлен, не выполняем запрос
     if (!id) {
-      console.log("Хук: ID не предоставлен, запрос не выполняется");
       return;
     }
 
@@ -42,23 +41,18 @@ export function useImageById(
           cache: "no-store",
         });
 
-
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(
-            `Ошибка загрузки изображения: ${response.status} - ${errorText}`,
+            `Ошибка загрузки изображения: ${response.status} - ${errorText}`
           );
         }
 
         // Получаем данные как Blob
         const blob = await response.blob();
-        console.log(
-          `Хук: Получен blob размером: ${blob.size} байт, тип: ${blob.type}`,
-        );
 
         // Создаем временный URL для Blob
         const url = URL.createObjectURL(blob);
-        console.log(`Хук: Создан URL объекта: ${url}`);
 
         if (isMounted) {
           setImageUrl(url);
@@ -66,7 +60,6 @@ export function useImageById(
         }
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") {
-          console.log("Хук: Запрос был отменен");
           return;
         }
 
@@ -83,7 +76,6 @@ export function useImageById(
 
     // Очистка при размонтировании компонента
     return () => {
-      console.log(`Хук: Очистка ресурсов для ID: ${id}`);
       isMounted = false;
       controller.abort();
 

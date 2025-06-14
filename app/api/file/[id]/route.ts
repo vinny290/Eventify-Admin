@@ -5,14 +5,13 @@ import { Params } from "@/types/Params";
 
 export async function GET(
   request: NextRequest,
-  { params }: Params,
+  { params }: Params
 ): Promise<NextResponse> {
   const { id } = await params;
 
   const accessToken = (await cookies()).get("accessToken")?.value;
 
   if (!accessToken) {
-    console.log("API-роут: Отсутствует токен доступа");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -32,7 +31,7 @@ export async function GET(
       const errorMessage = await response.text();
       return NextResponse.json(
         { error: `Ошибка при получении файла: ${errorMessage}` },
-        { status: response.status },
+        { status: response.status }
       );
     }
 
