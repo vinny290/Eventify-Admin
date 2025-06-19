@@ -83,23 +83,26 @@
     @apply bg-background text-foreground;
   }
 }
-
-/* .react-datepicker {
-  @apply border border-border bg-background shadow-lg;
+/* В globals.css */
+.touch-pan-y {
+  touch-action: pan-y;
 }
 
-.react-datepicker__header {
-  @apply bg-muted border-b border-border;
+.overflow-y-auto {
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
-.react-datepicker__current-month {
-  @apply text-foreground;
+/* Стилизация скроллбара для Chrome/Safari */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
 }
 
-.react-datepicker__day {
-  @apply text-foreground hover:bg-accent;
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 3px;
 }
 
-.react-datepicker__day--selected {
-  @apply bg-primary text-primary-foreground;
-} */
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}

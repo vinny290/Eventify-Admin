@@ -19,17 +19,17 @@ const EventImage: React.FC<EventImageProps> = ({
   width,
   height,
   className,
-  fill = false
+  fill = false,
 }) => {
   const { imageUrl, isLoading, error } = useImageById(imageId);
 
   if (isLoading) {
     return (
-      <Skeleton 
+      <Skeleton
         className={cn("rounded-md", className)}
-        style={{ 
+        style={{
           width: width || "100%",
-          height: height || "200px"
+          height: height || "200px",
         }}
       />
     );
@@ -42,34 +42,37 @@ const EventImage: React.FC<EventImageProps> = ({
   if (!imageUrl) {
     return <div className="text-gray-400 text-sm">Изображение отсутствует</div>;
   }
+  console.log("slider Image Url: ", imageUrl);
 
   // Парсим размеры для числовых значений
   const parsedWidth = typeof width === "string" ? parseInt(width) : width;
   const parsedHeight = typeof height === "string" ? parseInt(height) : height;
 
   return (
-    <div 
-      className={cn(
-        "relative", 
-        className,
-        { "w-full h-full": fill }
-      )}
-      style={fill ? {} : {
-        width: width || "100%",
-        height: height || "200px"
-      }}
+    <div
+      className={cn("relative", className, { "w-full h-full": fill })}
+      style={
+        fill
+          ? {}
+          : {
+              width: width || "100%",
+              height: height || "200px",
+            }
+      }
     >
       <Image
+        loader={() => imageUrl}
         src={imageUrl}
         alt={alt || "Изображение события"}
         fill={fill}
         width={!fill ? parsedWidth : undefined}
         height={!fill ? parsedHeight : undefined}
-        className={cn(
-          "object-cover rounded-t-lg",
-          { "static": !fill }
-        )}
-        sizes={fill ? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" : undefined}
+        className={cn("object-cover rounded-t-lg", { static: !fill })}
+        sizes={
+          fill
+            ? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            : undefined
+        }
       />
     </div>
   );

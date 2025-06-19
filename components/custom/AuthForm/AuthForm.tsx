@@ -6,6 +6,7 @@ import { useLogin } from "@/hook/auth/useLogin";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function AuthForm({
   className,
@@ -19,11 +20,14 @@ export function AuthForm({
     isLoading,
   } = useLogin();
 
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await handleLogin(e);
       toast.success("Успешный вход!");
+      router.push("/");
     } catch {
       toast.error(errorLoginMessage || "Ошибка авторизации");
     }

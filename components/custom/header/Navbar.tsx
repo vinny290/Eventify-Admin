@@ -20,13 +20,13 @@ import { useTheme } from "next-themes";
 const Navbar = observer(() => {
   const auth = useAuth();
   const router = useRouter();
-  const { theme, resolvedTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   const handleClickLogout = async () => {
     try {
       await auth.logout();
-      router.push("/");
       toast.success("Успешный выход!");
+      router.push("/");
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || "Проблема выхода из аккаунта"
@@ -69,12 +69,12 @@ const Navbar = observer(() => {
 
         <div className="flex-1 flex justify-end">
           <div className="hidden md:flex items-center gap-6">
-            <a
-              href="#contact"
+            <Link
+              href="/contact"
               className="text-gray-600 dark:text-white/60 hover:text-primary-light dark:hover:text-white transition-colors duration-200"
             >
               Контакты
-            </a>
+            </Link>
             <ModeToggle />
 
             {auth.accessToken ? (

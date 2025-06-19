@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/navigation";
-import { Save, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,34 +27,46 @@ import { toast } from "sonner";
 
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
-import MultiSelect from "@/components/custom/MultiSelect";
 import useGetCategories from "@/hook/categories/useGetCategories";
 import { useImageById } from "@/hook/files/useImageById";
+import SimpleSlider, { Slider } from "@/components/custom/Slider/Slider";
+import MultiSelect from "@/components/custom/MultiSelect";
 
 const EventPage = observer(
   ({ params }: { params: Promise<{ id: string }> }) => {
+    const [isEditing, setIsEditing] = useState(false);
+
     const unwrappedParams = React.use(params);
     const { id } = unwrappedParams;
     const router = useRouter();
 
     const { event, loadingEventById, errorEventById } = useGetEventById(id);
-    const { categories } = useGetEventCategories(event?.categories ?? []);
     const { categories: allCategories } = useGetCategories();
+
+    const categoryIdsForDisplay = isEditing
+      ? eventStore.editedEvent.categories ?? []
+      : eventStore.originalEvent?.categories ?? event?.categories ?? [];
+
+    const { categories: categoriesForDisplay } = useGetEventCategories(
+      categoryIdsForDisplay
+    );
+
     const { deleteEvent } = useDeleteEvent();
     const { editEvent } = useEditEvent();
     const { uploadImage, loadingUpload } = useUploadProfileImage();
-    const { organizator, loadingGetOrganizatorById, errorGetOrganizatorById } =
-      useGetOrganizatorById(event?.organizationID ?? "");
+    const { organizator } = useGetOrganizatorById(event?.organizationID ?? "");
     const { imageUrl: organizatorImageUrl } = useImageById(
       organizator?.photoID
     );
 
-    const [isEditing, setIsEditing] = useState(false);
+    console.log("event: ", event);
+
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const categoryOptions = allCategories.map((cat) => ({
       value: cat.id,
       label: cat.title,
+      color: cat.color,
     }));
 
     const handleCoverChange = async (
@@ -78,7 +89,7 @@ const EventPage = observer(
       if (event) {
         const eventWithMs = {
           ...event,
-          start: event.start * 1000,
+          start: event?.start * 1000,
           end: event.end * 1000,
         };
         eventStore.setEvent(eventWithMs);
@@ -100,6 +111,7 @@ const EventPage = observer(
         }
         eventStore.setEvent(updatedEvent);
         setIsEditing(false);
+        router.refresh();
       } catch (error) {
         toast.error("Ошибка сохранения изменений");
         console.error(error);
@@ -156,14 +168,10 @@ const EventPage = observer(
     }
 
     const rawCover = eventStore.originalEvent?.cover ?? event.cover;
+    const rawPictures = event.pictures;
     const coversArray = Array.isArray(rawCover)
       ? rawCover
       : [rawCover].filter(Boolean);
-
-    const showPrev = () =>
-      setCurrentIndex((prev) => (prev > 0 ? prev - 1 : coversArray.length - 1));
-    const showNext = () =>
-      setCurrentIndex((prev) => (prev < coversArray.length - 1 ? prev + 1 : 0));
 
     return (
       <div className="container max-w-screen-lg py-8 md:py-16 px-4 mx-auto">
@@ -308,37 +316,27 @@ const EventPage = observer(
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           {/* Левая часть */}
           <div className="w-full lg:w-1/3 flex flex-col items-center justify-center gap-2 sm:gap-3">
-            <div className="relative w-full max-w-[300px] sm:max-w-[400px] aspect-[1/1] rounded-xl sm:rounded-2xl md:rounded-[30px] overflow-hidden">
-              <EventImage
-                imageId={coversArray[currentIndex]}
-                alt={eventStore.originalEvent?.title || event.title}
-                fill
-                className="object-cover"
-              />
-
-              {coversArray.length > 1 && (
-                <>
-                  <button
-                    onClick={showPrev}
-                    className="absolute top-1/2 left-1 sm:left-2 -translate-y-1/2 bg-black/50 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-base"
-                  >
-                    ◀
-                  </button>
-                  <button
-                    onClick={showNext}
-                    className="absolute top-1/2 right-1 sm:right-2 -translate-y-1/2 bg-black/50 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-base"
-                  >
-                    ▶
-                  </button>
-                </>
+            <div className="relative w-full max-w-[300px] sm:max-w-[400px] aspect-[1/1] rounded-xl overflow-hidden">
+              {rawPictures.length >= 2 ? (
+                <Slider
+                  images={rawPictures}
+                  altTexts={rawPictures.map((id, idx) => `Фото ${idx + 1}`)}
+                />
+              ) : (
+                <EventImage
+                  imageId={coversArray[currentIndex]}
+                  alt={eventStore.originalEvent?.title || event.title}
+                  fill
+                  className="object-cover"
+                />
               )}
             </div>
 
             <div className="flex flex-wrap gap-1 sm:gap-2 justify-start w-full mt-1 sm:mt-2">
-              {categories.map((cat) => (
+              {categoriesForDisplay.map((cat) => (
                 <span
                   key={cat.id}
-                  className="text-xs px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-left"
+                  className="text-xs px-2 py-0.5 sm:px-3 sm:py-1 rounded-full"
                   style={{ backgroundColor: cat.color || "#f3f4f6" }}
                 >
                   <p className="text-black font-medium">{cat.title}</p>
