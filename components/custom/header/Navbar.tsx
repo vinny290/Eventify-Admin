@@ -41,17 +41,18 @@ const Navbar = observer(() => {
           <Link href="/">
             <div className="flex items-center gap-2">
               <Image
-                src={
-                  resolvedTheme === "dark"
-                    ? "/images/logo-dark.svg"
-                    : "/images/logo-light.svg"
-                }
+                src="/images/logo.svg"
                 width={50}
                 height={50}
                 alt="Eventify"
               />
-              <div className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-white/80 bg-clip-text text-transparent">
-                Eventify
+              <div>
+                <Image
+                  width={150}
+                  height={75}
+                  src="/images/logo-text.svg"
+                  alt="logo-text"
+                />
               </div>
             </div>
           </Link>
