@@ -86,25 +86,6 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     e.preventDefault();
   };
 
-  // Функция для получения контрастного цвета текста (чёрный или белый) в зависимости от фона
-  const getContrastColor = (hexColor: string) => {
-    // удаляем #
-    let hex = hexColor.replace("#", "");
-    if (hex.length === 3) {
-      // краткий формат, расширяем
-      hex = hex
-        .split("")
-        .map((ch) => ch + ch)
-        .join("");
-    }
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    // считаем яркость по формуле: https://www.w3.org/TR/AERT/#color-contrast
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance > 0.5 ? "#000000" : "#FFFFFF";
-  };
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild className="w-full">
@@ -117,13 +98,12 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
               selectedValues.map((val) => {
                 const opt = optionMap[val];
                 const bgColor = opt?.color || "#E0E0E0";
-                const textColor = getContrastColor(bgColor);
                 return (
                   <Badge
                     key={val}
                     style={{
                       backgroundColor: bgColor,
-                      color: textColor,
+                      color: "#000",
                     }}
                     className="flex items-center gap-1 px-2 py-1 rounded-md"
                   >
@@ -175,7 +155,6 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
               filteredOptions.map((option) => {
                 const isSelected = selectedValues.includes(option.value);
                 const bgColor = option.color;
-                const textColor = getContrastColor(bgColor);
                 return (
                   <CommandItem
                     key={option.value}
@@ -191,8 +170,12 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                         }}
                       />
                       <span
+                        className={
+                          isSelected
+                            ? "text-black"
+                            : "dark:text-white text-black"
+                        }
                         style={{
-                          color: textColor,
                           backgroundColor: isSelected ? bgColor : "transparent",
                           borderRadius: isSelected ? "0.25rem" : undefined,
                           padding: isSelected ? "0.1rem 0.25rem" : undefined,
