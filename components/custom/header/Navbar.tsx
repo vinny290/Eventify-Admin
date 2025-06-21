@@ -50,7 +50,11 @@ const Navbar = observer(() => {
                 <Image
                   width={150}
                   height={75}
-                  src="/images/logo-text.svg"
+                  src={
+                    resolvedTheme === "dark"
+                      ? "/images/logo-text.svg"
+                      : "/images/logo-text-dark.svg"
+                  }
                   alt="logo-text"
                 />
               </div>
