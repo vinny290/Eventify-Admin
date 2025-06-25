@@ -65,9 +65,7 @@ const Navbar = observer(() => {
         <div className="flex-1 hidden md:flex justify-center">
           {auth.accessToken && (
             <Link href="/event/create">
-              <Button className="bg-backgroundLight hover:bg-backgroundLight dark:bg-backgroundDark dark:text-white">
-                Создать событие
-              </Button>
+              <Button className="bg-primary text-white">Создать событие</Button>
             </Link>
           )}
         </div>
